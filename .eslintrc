@@ -1,0 +1,33 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "jquery": true,
+    "meteor": true
+  },
+  "plugins": ["import", "meteor", "prettier"],
+  "extends": ["plugin:meteor/recommended", "prettier"],
+  "settings": {
+    "import/resolver": "meteor"
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 7,
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
+  },
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "tabWidth": 2,
+        "bracketSpacing": true,
+        "printWidth": 100
+      }
+    ]
+  }
+}
