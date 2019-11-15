@@ -5,7 +5,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 export default function MainPage(props) {
-  const targetPath = Meteor.userId() ? "/contacts" : "/login";
+  const targetPath = Meteor.userId() ? "/messaging" : "/login";
 
   return (
     <Redirect

@@ -86,7 +86,7 @@ function LoginPage({ history }) {
         return toast.error("Такого пользователя не существует");
       }
 
-      history.push("/");
+      history.push("/messaging");
     });
   }
 
