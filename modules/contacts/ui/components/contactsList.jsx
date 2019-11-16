@@ -5,7 +5,6 @@ import React from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
 import { ContactItem } from "./contactItem";
 
 import { ContactsCollection } from "../../collections";
@@ -14,7 +13,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
+    height: "100%",
+    overflowY: "scroll"
   },
   inline: {
     display: "inline"
@@ -35,13 +36,7 @@ function ContactsList({ contacts, contactId, ready, onContactSelect }) {
     );
   });
 
-  return (
-    <List className={classes.root}>
-      <Divider variant="inset" component="li" />
-      {contactsRender}
-      <Divider variant="inset" component="li" />
-    </List>
-  );
+  return <List className={classes.root}>{contactsRender}</List>;
 }
 
 export default withTracker(() => {

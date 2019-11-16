@@ -10,30 +10,29 @@ if (Meteor.users.find().count() === 0) {
     {
       avatar: "https://material-ui.com/static/images/avatar/1.jpg",
       name: "China",
-      lastMessage: ""
+      lastMessageTrimmed: "how are you",
+      channels: ["whatsapp", "telegram"]
     },
     {
       avatar: "https://material-ui.com/static/images/avatar/2.jpg",
       name: "Mura",
-      lastMessage: ""
+      lastMessageTrimmed: ""
     },
     {
       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
       name: "Nadya",
-      lastMessage: ""
+      lastMessageTrimmed: ""
     }
   ];
 
   const messages = [
     {
       message: "Hi",
-      type: "whatsapp",
-      createdDate: new Date()
+      channel: "whatsapp"
     },
     {
       message: "how are you",
-      type: "telegram",
-      createdDate: new Date()
+      channel: "telegram"
     }
   ];
 
@@ -41,6 +40,17 @@ if (Meteor.users.find().count() === 0) {
 
   messages.forEach(message => {
     message.contactId = contactId;
-    MessagesCollection.insert(message);
+    const messageId = MessagesCollection.insert(message);
+
+    ContactsCollection.update(
+      {
+        _id: contactId
+      },
+      {
+        $set: {
+          lastMessageId: messageId
+        }
+      }
+    );
   });
 }
