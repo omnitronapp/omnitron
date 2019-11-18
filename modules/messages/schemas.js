@@ -10,6 +10,10 @@ export const MessageSchema = new SimpleSchema({
   message: {
     type: String
   },
+  messageId: {
+    type: String,
+    optional: true
+  },
   createdAt: {
     type: Date,
     autoValue: function() {

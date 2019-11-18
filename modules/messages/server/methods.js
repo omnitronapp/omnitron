@@ -4,6 +4,7 @@ import { MessagesCollection } from "../collections";
 
 import { trimMessage } from "../../utils";
 import { ContactsCollection } from "../../contacts/collections";
+import { sendMessageToChannel } from "../../messaging/services/messagingService";
 
 Meteor.methods({
   createMessage({ contactId, message }) {
@@ -44,5 +45,7 @@ Meteor.methods({
         }
       }
     );
+
+    sendMessageToChannel(contactId, message);
   }
 });
