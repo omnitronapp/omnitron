@@ -4,14 +4,20 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AuthListener } from "../auth/ui/components";
 import MainPage from "./mainPage";
 import MessagingPage from "../messaging/ui/pages/MessagingPage";
+import TransportSettingsPage from "../transports/ui/pages/TransportSettingsPage";
 
 export function AppRouter(props) {
   return (
     <Router>
-      <MainPage />
+      <Route path="/" exact={true}>
+        <MainPage />
+      </Route>
       <Switch>
         <Route path="/messaging">
           <MessagingPage />
+        </Route>
+        <Route path="/transports">
+          <TransportSettingsPage />
         </Route>
         <Route path="/login">
           <LoginPage />
