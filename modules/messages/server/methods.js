@@ -5,7 +5,7 @@ import { MessagesCollection } from "../collections";
 import { trimMessage } from "../../utils";
 import { ContactsCollection } from "../../contacts/collections";
 import { UserChannels } from "../../channels/collection";
-import { transports } from "../../transports";
+import { Transports } from "../../transports";
 
 Meteor.methods({
   receiveMessage(messageData) {
@@ -106,6 +106,6 @@ Meteor.methods({
       }
     );
 
-    transports.sendMessage(lastUsedChannel, contactId, message);
+    Transports.sendMessage(lastUsedChannel, contactId, message);
   }
 });

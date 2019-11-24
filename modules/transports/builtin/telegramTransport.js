@@ -5,10 +5,26 @@ const Telegraf = require("telegraf");
 export class Transport extends EventEmitter {
   constructor() {
     super();
+
+    this.name = "telegram";
+    this.channel = "telegram";
+    this.title = "Telegram";
   }
 
-  configure() {
-    const bot = new Telegraf("1006308549:AAF3arQNDAYaIIT8vN3MsYYY6TCgqdhNVMk");
+  requireCredentials() {
+    return [
+      {
+        key: "token",
+        title: "Bot Token"
+      }
+    ];
+  }
+
+  configure({ credentials }) {
+    if (!credentials || Object.keys(credentials) === 0) {
+      throw new Error(`${this.name} transport credentails not provided`);
+    }
+    const bot = new Telegraf(credentials.token);
 
     bot.on("text", ctx => {
       const { message } = ctx;
@@ -30,16 +46,25 @@ export class Transport extends EventEmitter {
     });
 
     bot.launch();
+
+    this.credentials = credentials;
     this.bot = bot;
   }
 
   sendMessage(chatId, message) {
     return new Promise((resolve, reject) => {
-      return this.bot.telegram.sendMessage(chatId, message).then(() => resolve(), () => reject());
+      if (this.bot) {
+        return this.bot.telegram.sendMessage(chatId, message).then(() => resolve(), () => reject());
+      } else {
+        reject("Bot is disabled");
+      }
     });
   }
 
   stop() {
-    this.bot.stop();
+    this.credentials = null;
+    if (this.bot) {
+      this.bot.stop();
+    }
   }
 }

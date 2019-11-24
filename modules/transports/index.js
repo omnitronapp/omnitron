@@ -1,8 +1,18 @@
 import { Meteor } from "meteor/meteor";
 
-import { Transports } from "./transports";
+import { Transports as TransportsClass } from "./transports";
 
-export const transports = new Transports();
+import { Transport as TelegramTransport } from "./builtin/telegramTransport";
+
+export const Transports = new TransportsClass();
+
+export function registerBasicTransports() {
+  const builtInTransports = [new TelegramTransport()];
+
+  builtInTransports.forEach(transport => {
+    Transports.registerTransport(transport);
+  });
+}
 
 if (Meteor.isServer) {
   import "./server";

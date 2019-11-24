@@ -6,7 +6,6 @@ import {
   Paper,
   Tabs,
   Tab,
-  TextField,
   Typography,
   FormControlLabel
 } from "@material-ui/core";
@@ -15,6 +14,7 @@ import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 import { TransportsCollection } from "../../collections";
 import { LoadingScreen } from "../../../loading/ui/loadingScreen";
+import TransportCredentialsForm from "./TransportCredentialsForm";
 
 function a11yProps(index) {
   return {
@@ -30,7 +30,23 @@ function getTransportTabs(transports) {
 }
 
 function TransportTabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const { value, index, transport } = props;
+
+  function onCredentialChange(event, asd) {
+    const { name, value } = event.target;
+
+    console.log(name, value);
+
+    Meteor.call("updateTransportCredential", transport._id, name, value, (err, res) => {
+      console.log(err, res);
+    });
+  }
+
+  function onTransportStatusChange(event, enabled) {
+    Meteor.call("changeTransportStatus", transport._id, enabled, (err, res) => {
+      console.log(err, res);
+    });
+  }
 
   return (
     <Typography
@@ -39,11 +55,18 @@ function TransportTabPanel(props) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}
     >
       <Container>
-        <TextField id="standard-basic" label="Bot API" fullWidth />
-        <FormControlLabel control={<Checkbox checked={true} value="enabled" />} label="Enabled" />
+        <TransportCredentialsForm
+          transport={transport}
+          credentials={transport.credentials}
+          onChange={onCredentialChange}
+        />
+        <FormControlLabel
+          control={<Checkbox checked={transport.enabled} value={"Enabled"} />}
+          label="Enabled"
+          onChange={onTransportStatusChange}
+        />
       </Container>
     </Typography>
   );
@@ -52,9 +75,12 @@ function TransportTabPanel(props) {
 function getTransportTabPanels(transports, currentTab) {
   return transports.map((transport, index) => {
     return (
-      <TransportTabPanel key={`panel-${transport._id}`} value={currentTab} index={index}>
-        {transport.name}
-      </TransportTabPanel>
+      <TransportTabPanel
+        key={`panel-${transport._id}`}
+        value={currentTab}
+        index={index}
+        transport={transport}
+      />
     );
   });
 }
