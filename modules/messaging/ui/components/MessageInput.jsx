@@ -27,7 +27,6 @@ export default function MessageInput({ sendMessage }) {
         placeholder="Write your message"
         value={message}
         onChange={onChange}
-        margin="normal"
         variant="outlined"
       />
       <Button variant="outlined" color="primary" onClick={onSendMessage}>
