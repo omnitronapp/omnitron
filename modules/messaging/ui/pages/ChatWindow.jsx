@@ -6,6 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
 import { MessagesCollection } from "../../../messages/collections";
 import MessageGroup from "../components/MessageGroup";
+import _ from "underscore";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,29 +34,20 @@ function ChatWindow({ messages, dividedMessages }) {
 
 export default withTracker(({ contactId }) => {
   const subHandler = Meteor.subscribe("messages", { contactId });
-  const messages = MessagesCollection.find().fetch();
+  const messages = MessagesCollection.find({}, { sort: { createdAt: 1 } }).fetch();
 
-  let result = [];
-  let lastDate = null;
-
-  messages.reduce(function(p, c, i, a) {
-    const date = new Date(c.createdAt);
-    const isSameDate = moment(lastDate).isSame(date, "day");
-    if (!(lastDate === null || isSameDate)) {
-      result.push(p);
-      p = [];
-    }
-    p.push(c);
-    if (i === a.length - 1 && p.length > 0) {
-      result.push(p);
-    }
-    lastDate = date;
-    return p;
-  }, []);
+  let dateGroups = _.chain(messages)
+    .groupBy(function(obj) {
+      return moment(obj.createdAt).format("DD.MM.YYYY");
+    })
+    .sortBy(function(v, k) {
+      return k;
+    })
+    .value();
 
   return {
     messages,
     ready: subHandler.ready(),
-    dividedMessages: result
+    dividedMessages: dateGroups
   };
 })(ChatWindow);

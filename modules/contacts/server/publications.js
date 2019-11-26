@@ -2,8 +2,9 @@ import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check";
 import { ContactsCollection } from "../collections";
 
-Meteor.publish("contacts", function(name) {
+Meteor.publish("contacts", function(name, options) {
   check(name, Match.Maybe(String));
+  check(options, Object);
 
   if (!this.userId) {
     return this.ready();
@@ -17,5 +18,5 @@ Meteor.publish("contacts", function(name) {
     };
   }
 
-  return ContactsCollection.find(filters);
+  return ContactsCollection.find(filters, options);
 });

@@ -22,20 +22,8 @@ const useStyles = makeStyles(theme => ({
   },
   appBar: {
     width: `100%`,
-    marginLeft: drawerWidth
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: drawerWidth
-  },
-  toolbar: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3)
+    marginLeft: drawerWidth,
+    zIndex: "2020"
   },
   layout: {
     maxWidth: "100vw",

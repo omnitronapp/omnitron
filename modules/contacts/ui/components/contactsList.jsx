@@ -1,49 +1,22 @@
 import { Meteor } from "meteor/meteor";
-import { withTracker } from "meteor/react-meteor-data";
+import React, { useState } from "react";
 
-import React from "react";
+import ShowContacts from "./ShowContacts";
 
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import { ContactItem } from "./contactItem";
+export default function ContactsList({ contacts, contactId, onContactSelect }) {
+  const [page, setPage] = useState(0);
 
-import { ContactsCollection } from "../../collections";
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%",
-    backgroundColor: theme.palette.background.paper,
-    height: "100%",
-    overflowY: "scroll"
-  },
-  inline: {
-    display: "inline"
-  }
-}));
-
-function ContactsList({ contacts, contactId, ready, onContactSelect }) {
-  const classes = useStyles();
-
-  const contactsRender = contacts.map(contact => {
-    return (
-      <ContactItem
-        key={contact._id}
-        {...contact}
-        selected={contact._id === contactId}
-        onContactSelect={onContactSelect}
-      />
-    );
-  });
-
-  return <List className={classes.root}>{contactsRender}</List>;
-}
-
-export default withTracker(({ searchContact }) => {
-  const subHandler = Meteor.subscribe("contacts", searchContact);
-  const contacts = ContactsCollection.find().fetch();
-
-  return {
-    contacts,
-    ready: subHandler.ready()
+  const incrementPage = function(myPage) {
+    setPage(++myPage);
   };
-})(ContactsList);
+
+  return (
+    <ShowContacts
+      page={page}
+      contacts={contacts}
+      contactId={contactId}
+      onContactSelect={onContactSelect}
+      incrementPage={incrementPage}
+    />
+  );
+}

@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    marginTop: "64px"
+    paddingTop: "64px"
   },
   toolbar: theme.mixins.toolbar,
   clearInputBtn: {
