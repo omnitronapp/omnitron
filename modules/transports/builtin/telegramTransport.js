@@ -15,7 +15,8 @@ export class Transport extends EventEmitter {
     return [
       {
         key: "token",
-        title: "Bot Token"
+        title: "Bot Token",
+        type: "password"
       }
     ];
   }

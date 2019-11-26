@@ -20,11 +20,13 @@ export class Transport extends EventEmitter {
       },
       {
         key: "accountSid",
-        title: "Account SID"
+        title: "Account SID",
+        type: "password"
       },
       {
         key: "authToken",
-        title: "Auth Token"
+        title: "Auth Token",
+        type: "password"
       }
     ];
   }
