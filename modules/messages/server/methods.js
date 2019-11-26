@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
-import { MessagesCollection } from "../collections";
+import { MessagesCollection, RawMessagesCollection } from "../collections";
 
 import { trimMessage } from "../../utils";
 import { ContactsCollection } from "../../contacts/collections";
@@ -8,8 +8,21 @@ import { UserChannels } from "../../channels/collection";
 import { Transports } from "../../transports";
 
 Meteor.methods({
-  receiveMessage(messageData) {
-    check(messageData, Object);
+  receiveMessage({ parsedMessage, rawMessage }) {
+    check(parsedMessage, Object);
+    check(rawMessage, Object);
+
+    let rawMessageId = "";
+
+    try {
+      rawMessageId = RawMessagesCollection.insert({
+        channel: parsedMessage.channel,
+        message: rawMessage,
+        createdAt: new Date()
+      });
+    } catch (e) {
+      console.error(e);
+    }
     /**
       {
         messageId: message_id
@@ -23,9 +36,9 @@ Meteor.methods({
       }
      */
     const existingUserChannel = UserChannels.findOne({
-      channel: messageData.channel,
-      chatId: messageData.chatId,
-      channelContactId: messageData.contactId
+      channel: parsedMessage.channel,
+      chatId: parsedMessage.chatId,
+      channelContactId: parsedMessage.contactId
     });
 
     let contactId = undefined;
@@ -33,23 +46,25 @@ Meteor.methods({
       contactId = existingUserChannel.contactId;
     } else {
       contactId = ContactsCollection.insert({
-        name: messageData.firstName || messageData.username,
-        channels: [messageData.channel]
+        name: parsedMessage.firstName || parsedMessage.username,
+        channels: [parsedMessage.channel]
       });
 
       UserChannels.insert({
-        channel: messageData.channel,
+        channel: parsedMessage.channel,
         contactId,
-        channelContactId: messageData.userId,
-        chatId: messageData.chatId
+        channelContactId: parsedMessage.userId,
+        chatId: parsedMessage.chatId
       });
     }
 
     const messageId = MessagesCollection.insert({
+      ...parsedMessage,
       contactId,
-      channel: messageData.channel,
-      messageId: messageData.messageId,
-      message: messageData.text
+      rawMessageId,
+      channel: parsedMessage.channel,
+      messageId: parsedMessage.messageId,
+      message: parsedMessage.text
     });
 
     ContactsCollection.update(
@@ -57,14 +72,15 @@ Meteor.methods({
       {
         $set: {
           lastMessageId: messageId,
-          lastMessageTrimmed: trimMessage(messageData.text)
+          lastMessageTrimmed: trimMessage(parsedMessage.text)
         }
       }
     );
 
     return {
       contactId,
-      messageId
+      messageId,
+      rawMessageId
     };
   },
   createMessage({ contactId, message }) {

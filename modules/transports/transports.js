@@ -47,8 +47,8 @@ export class Transports {
 
         transport.on(
           "message",
-          Meteor.bindEnvironment(messageData => {
-            Meteor.call("receiveMessage", messageData);
+          Meteor.bindEnvironment(message => {
+            Meteor.call("receiveMessage", message);
           })
         );
       } else {

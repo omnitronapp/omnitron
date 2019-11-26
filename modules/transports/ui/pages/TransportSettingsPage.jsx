@@ -35,8 +35,6 @@ function TransportTabPanel(props) {
   function onCredentialChange(event, asd) {
     const { name, value } = event.target;
 
-    console.log(name, value);
-
     Meteor.call("updateTransportCredential", transport._id, name, value, (err, res) => {
       console.log(err, res);
     });

@@ -2,7 +2,6 @@ import { EventEmitter } from "events";
 
 import { Rest } from "../../rest/server";
 import Twilio from "twilio";
-
 export class Transport extends EventEmitter {
   constructor() {
     super();
@@ -20,11 +19,13 @@ export class Transport extends EventEmitter {
       },
       {
         key: "accountSid",
-        title: "Account SID"
+        title: "Account SID",
+        type: "password"
       },
       {
         key: "authToken",
-        title: "Auth Token"
+        title: "Auth Token",
+        type: "password"
       }
     ];
   }
@@ -61,7 +62,10 @@ export class Transport extends EventEmitter {
           channel: "whatsapp"
         };
 
-        this.emit("message", messageData);
+        this.emit("message", {
+          parsedMessage,
+          rawMessage: message
+        });
       })
     );
   }

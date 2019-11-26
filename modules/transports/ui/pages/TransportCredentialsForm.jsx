@@ -14,6 +14,7 @@ export default function TransportCredentialsForm({ transport, onChange }) {
         fullWidth
         onChange={onChange}
         value={value}
+        type={item.type}
       />
     );
   });
