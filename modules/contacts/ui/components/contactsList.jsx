@@ -12,7 +12,6 @@ import { ContactsCollection } from "../../collections";
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
     height: "100%",
     overflowY: "scroll"
@@ -39,8 +38,8 @@ function ContactsList({ contacts, contactId, ready, onContactSelect }) {
   return <List className={classes.root}>{contactsRender}</List>;
 }
 
-export default withTracker(() => {
-  const subHandler = Meteor.subscribe("contacts");
+export default withTracker(({ searchContact }) => {
+  const subHandler = Meteor.subscribe("contacts", searchContact);
   const contacts = ContactsCollection.find().fetch();
 
   return {

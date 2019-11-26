@@ -22,17 +22,84 @@ if (Meteor.users.find().count() === 0) {
       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
       name: "Nadya",
       lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Vlad",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Jack",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Natasha",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Bob",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Ren",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Ron",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Max",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Mark",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Tor",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Azamat",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Abay",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Abylay",
+      lastMessageTrimmed: ""
+    },
+    {
+      avatar: "https://material-ui.com/static/images/avatar/3.jpg",
+      name: "Aizhan",
+      lastMessageTrimmed: ""
     }
   ];
 
   const messages = [
     {
       message: "Hi",
-      channel: "whatsapp"
+      channel: "whatsapp",
+      inbound: true
     },
     {
       message: "how are you",
-      channel: "telegram"
+      channel: "telegram",
+      inbound: true
     }
   ];
 

@@ -27,5 +27,10 @@ export const MessageSchema = new SimpleSchema({
       return new Date();
     },
     optional: true
+  },
+  inbound: {
+    type: Boolean,
+    defaultValue: false,
+    optional: true
   }
 });

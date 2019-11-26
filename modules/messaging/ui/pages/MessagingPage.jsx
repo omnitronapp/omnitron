@@ -1,68 +1,84 @@
 import { Meteor } from "meteor/meteor";
 
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Box, Grid, Paper } from "@material-ui/core";
 
+import { makeStyles } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import { Grid } from "@material-ui/core";
+
+import CustomDrawer from "../../../drawer/CustomDrawer";
 import ContactsList from "../../../contacts/ui/components/contactsList";
-import MessagesList from "../../../messages/ui/components/messagesList";
-import MessageInput from "../components/MessageInput";
+import ChatLayout from "./ChatLayout";
+
+const drawerWidth = "25%";
 
 const useStyles = makeStyles(theme => ({
   root: {
+    display: "flex",
+    height: "100vh"
+  },
+  appBar: {
+    width: `100%`,
+    marginLeft: drawerWidth
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0
+  },
+  drawerPaper: {
+    width: drawerWidth
+  },
+  toolbar: theme.mixins.toolbar,
+  content: {
     flexGrow: 1,
-    maxWidth: "1010px",
-    minWidth: "300px",
-    margin: "0 auto",
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3)
+  },
+  layout: {
+    maxWidth: "100vw",
+    maxHeight: "100vh",
     overflow: "hidden"
   }
 }));
 
 export default function MessagingPage() {
-  const [currentContactId, setContactId] = useState();
+  const [currentContactId, setContactId] = useState(null);
+  const [searchContact, setSearchContact] = useState("");
 
   function onContactSelect(contactId) {
     setContactId(contactId);
   }
 
-  function sendMessage(message) {
-    Meteor.call("createMessage", {
-      contactId: currentContactId,
-      message
-    });
-  }
+  const onSearchContact = function(text) {
+    setSearchContact(text);
+    setContactId(null);
+  };
 
   const classes = useStyles();
 
   return (
-    <Box>
-      <Paper className={classes.root}>
-        <Grid container spacing={0}>
-          <Grid item xs={12}>
-            <Grid container justify="center" spacing={1}>
-              <Grid key="contacts-list" item xs={4}>
-                <ContactsList contactId={currentContactId} onContactSelect={onContactSelect} />
-              </Grid>
-              <Grid key="messaging-panel" item xs={8}>
-                <Grid
-                  container
-                  className={classes.root}
-                  spacing={0}
-                  direction="column"
-                  justify="flex-end"
-                >
-                  <Grid key="messages-list" item xs={12}>
-                    <MessagesList contactId={currentContactId} />
-                  </Grid>
-                  <Grid key="messages-input" item xs={12}>
-                    <MessageInput sendMessage={sendMessage} />
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Paper>
-    </Box>
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <Typography variant="h6" noWrap>
+            Omnitron
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <CustomDrawer searchContact={searchContact} onSearchContact={onSearchContact}>
+        <ContactsList
+          searchContact={searchContact}
+          contactId={currentContactId}
+          onContactSelect={onContactSelect}
+        />
+      </CustomDrawer>
+      <Grid item xs className={classes.layout}>
+        <ChatLayout contactId={currentContactId} />
+      </Grid>
+    </div>
   );
 }
