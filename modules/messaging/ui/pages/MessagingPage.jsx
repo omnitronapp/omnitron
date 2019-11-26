@@ -5,9 +5,12 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { Grid } from "@material-ui/core";
+
+import { Link } from "react-router-dom";
 
 import CustomDrawer from "../../../drawer/CustomDrawer";
 import ContactsList from "../../../contacts/ui/components/contactsList";
@@ -24,6 +27,13 @@ const useStyles = makeStyles(theme => ({
     width: `100%`,
     marginLeft: drawerWidth,
     zIndex: "2020"
+  },
+  title: {
+    flexGrow: 1
+  },
+  appBarMenuLinks: {
+    textDecoration: "none",
+    color: "white"
   },
   layout: {
     maxWidth: "100vw",
@@ -52,9 +62,19 @@ export default function MessagingPage() {
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="h6" noWrap>
+          <Typography variant="h6" noWrap className={classes.title}>
             Omnitron
           </Typography>
+          <Button color="inherit">
+            <Link to="/messaging" className={classes.appBarMenuLinks}>
+              Messages
+            </Link>
+          </Button>
+          <Button color="inherit">
+            <Link to="/transports" className={classes.appBarMenuLinks}>
+              Transports
+            </Link>
+          </Button>
         </Toolbar>
       </AppBar>
       <CustomDrawer searchContact={searchContact} onSearchContact={onSearchContact}>
