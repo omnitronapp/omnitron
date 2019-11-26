@@ -27,6 +27,42 @@ export class Transport extends EventEmitter {
     }
     const bot = new Telegraf(credentials.token);
 
+    bot.on("photo", ctx => {
+      const { message } = ctx;
+      const previewPhotoId = message.photo[0].file_id;
+      const photoId = message.photo[message.photo.length - 1].file_id;
+
+      const retrieveFilesPromises = [
+        bot.telegram.getFileLink(previewPhotoId),
+        bot.telegram.getFileLink(photoId)
+      ];
+
+      Promise.all(retrieveFilesPromises)
+        .then(photoLinks => {
+          const messageData = {
+            messageId: message.message_id,
+            userId: message.from.id,
+            username: message.from.username,
+            firstName: message.chat.first_name,
+            chatId: message.chat.id,
+            date: Date.now(),
+            text: message.text,
+            type: "photo",
+            previewPhoto: photoLinks[0],
+            photo: photoLinks[1],
+            channel: "telegram"
+          };
+
+          this.emit("message", {
+            parsedMessage: messageData,
+            rawMessage: message
+          });
+        })
+        .catch(err => {
+          console.error("Could not retrieve photo links from telegram", err.message);
+        });
+    });
+
     bot.on("text", ctx => {
       const { message } = ctx;
 
@@ -40,10 +76,14 @@ export class Transport extends EventEmitter {
         chatId: message.chat.id,
         date: date,
         text: message.text,
+        type: "plain",
         channel: "telegram"
       };
 
-      this.emit("message", messageData);
+      this.emit("message", {
+        parsedMessage: messageData,
+        rawMessage: message
+      });
     });
 
     bot.launch();

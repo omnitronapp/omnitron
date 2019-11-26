@@ -2,7 +2,6 @@ import { EventEmitter } from "events";
 
 import { Rest } from "../../rest/server";
 import Twilio from "twilio";
-
 export class Transport extends EventEmitter {
   constructor() {
     super();
@@ -63,7 +62,10 @@ export class Transport extends EventEmitter {
           channel: "whatsapp"
         };
 
-        this.emit("message", messageData);
+        this.emit("message", {
+          parsedMessage,
+          rawMessage: message
+        });
       })
     );
   }

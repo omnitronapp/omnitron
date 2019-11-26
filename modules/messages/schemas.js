@@ -8,7 +8,8 @@ export const MessageSchema = new SimpleSchema({
     type: String
   },
   message: {
-    type: String
+    type: String,
+    optional: true
   },
   messageId: {
     type: String,
