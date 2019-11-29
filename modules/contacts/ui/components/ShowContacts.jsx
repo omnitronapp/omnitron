@@ -51,7 +51,10 @@ function ShowContacts({ contacts, contactId, ready, onContactSelect, incrementPa
 
 export default withTracker(({ searchContact, page }) => {
   const options = {
-    limit: page * 10
+    limit: page * 10,
+    sort: {
+      latestActiveDate: -1
+    }
   };
   const subHandler = Meteor.subscribe("contacts", searchContact, options);
   const contacts = ContactsCollection.find().fetch();

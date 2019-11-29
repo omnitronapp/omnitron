@@ -64,7 +64,8 @@ Meteor.methods({
       rawMessageId,
       channel: parsedMessage.channel,
       messageId: parsedMessage.messageId,
-      message: parsedMessage.text
+      message: parsedMessage.text,
+      inbound: true
     });
 
     ContactsCollection.update(
@@ -72,7 +73,8 @@ Meteor.methods({
       {
         $set: {
           lastMessageId: messageId,
-          lastMessageTrimmed: trimMessage(parsedMessage.text)
+          lastMessageTrimmed: trimMessage(parsedMessage.text),
+          latestActiveDate: new Date()
         }
       }
     );

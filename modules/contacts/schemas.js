@@ -23,6 +23,10 @@ export const ContactSchema = new SimpleSchema({
   "channels.$": {
     type: String
   },
+  latestActiveDate: {
+    type: Date,
+    optional: true
+  },
   createdAt: {
     type: Date,
     autoValue: function() {
