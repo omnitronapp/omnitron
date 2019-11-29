@@ -27,7 +27,7 @@ export class Transport extends EventEmitter {
     }
     const bot = new Telegraf(credentials.token);
 
-    bot.on("photo", ctx => {
+    bot.on(["photo", "document"], ctx => {
       const { message } = ctx;
       const previewPhotoId = message.photo[0].file_id;
       const photoId = message.photo[message.photo.length - 1].file_id;

@@ -3,6 +3,9 @@ import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper, ListItem, Grid, Typography } from "@material-ui/core";
 
+import PlainMessage from "./messageTypes/PlainMessage";
+import PhotoRenderer from "./messageTypes/PhotoRenderer";
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: `${theme.spacing(1)}px ${theme.spacing(3)}px`,
@@ -47,10 +50,20 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+function getMessageRenderer(type) {
+  if (type === "photo") {
+    return PhotoRenderer;
+  }
+
+  return PlainMessage;
+}
+
 export default function ChatMessages({ message }) {
   const classes = useStyles();
 
   const { inbound } = message;
+
+  const MessageRenderer = getMessageRenderer(message.type);
 
   return (
     <Grid
@@ -65,7 +78,7 @@ export default function ChatMessages({ message }) {
         <Paper elevation={0} className={inbound ? classes.chunkInbound : classes.chunkOutbound} />
         <ListItem className={classes.item}>
           <Grid item xs>
-            <Typography>{message.message}</Typography>
+            <MessageRenderer message={message} />
           </Grid>
           <Grid item className={classes.time}>
             <Typography variant="caption" align="center">
