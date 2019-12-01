@@ -4,7 +4,7 @@ import { ContactsCollection } from "../modules/contacts/collections";
 import { MessagesCollection } from "../modules/messages/collections";
 
 if (Meteor.users.find().count() === 0) {
-  Accounts.createUser({ username: "omnisend", password: "omnisend" });
+  Accounts.createUser({ username: "omnitron", password: "omnitron" });
 
   const contacts = [
     {

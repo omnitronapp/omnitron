@@ -104,7 +104,7 @@ Meteor.methods({
       }
     );
 
-    const lastUsedChannel = lastMessage ? lastMessage.channel : "omnisend";
+    const lastUsedChannel = lastMessage ? lastMessage.channel : "omnitron";
     const messageId = MessagesCollection.insert({
       contactId,
       message,
