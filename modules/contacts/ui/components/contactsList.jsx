@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import ShowContacts from "./ShowContacts";
 
-export default function ContactsList({ contacts, contactId, onContactSelect }) {
+export default function ContactsList({ contacts, contactId, onContactSelect, searchContact }) {
   const [page, setPage] = useState(0);
 
   const incrementPage = function(myPage) {
@@ -17,6 +17,7 @@ export default function ContactsList({ contacts, contactId, onContactSelect }) {
       contactId={contactId}
       onContactSelect={onContactSelect}
       incrementPage={incrementPage}
+      searchContact={searchContact}
     />
   );
 }

@@ -57,7 +57,7 @@ export default withTracker(({ searchContact, page }) => {
     }
   };
   const subHandler = Meteor.subscribe("contacts", searchContact, options);
-  const contacts = ContactsCollection.find().fetch();
+  const contacts = ContactsCollection.find({}, { sort: { latestActiveDate: -1 } }).fetch();
 
   return {
     contacts,
