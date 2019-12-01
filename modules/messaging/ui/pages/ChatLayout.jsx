@@ -7,7 +7,6 @@ import ChatWindow from "./ChatWindow";
 import ChatInput from "../components/ChatInput";
 
 const useStyles = makeStyles(theme => ({
-  toolbar: theme.mixins.toolbar,
   root: {
     width: "100%",
     height: "100%",
@@ -56,7 +55,6 @@ export default function ChatLayout({ contactId }) {
     <Grid container className={classes.root} spacing={0} wrap="nowrap">
       <Grid item xs>
         <Grid container direction="column" className={classes.window} spacing={0} wrap="nowrap">
-          <div className={classes.toolbar} />
           {showChat()}
         </Grid>
       </Grid>

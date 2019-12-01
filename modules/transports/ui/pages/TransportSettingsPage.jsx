@@ -7,7 +7,8 @@ import {
   Tabs,
   Tab,
   Typography,
-  FormControlLabel
+  FormControlLabel,
+  Grid
 } from "@material-ui/core";
 
 import { Meteor } from "meteor/meteor";
@@ -96,21 +97,24 @@ function TransportSettingsPage({ ready, transports }) {
 
   const tabPanels = getTransportTabPanels(transports, currentTab);
 
-  console.log(tabPanels);
   return (
-    <Box>
-      <Paper>
-        <Tabs
-          value={currentTab}
-          onChange={handleChange}
-          aria-label="Channel transports configuration"
-        >
-          {getTransportTabs(transports)}
-        </Tabs>
+    <Container>
+      <Grid>
+        <Grid item xs={12}>
+          <Paper>
+            <Tabs
+              value={currentTab}
+              onChange={handleChange}
+              aria-label="Channel transports configuration"
+            >
+              {getTransportTabs(transports)}
+            </Tabs>
 
-        {getTransportTabPanels(transports, currentTab)}
-      </Paper>
-    </Box>
+            {getTransportTabPanels(transports, currentTab)}
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 

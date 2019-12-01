@@ -5,7 +5,7 @@ import React from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
-import { ContactItem } from "./contactItem";
+import { ContactItem } from "./ContactItem";
 import InfiniteScroll from "react-infinite-scroller";
 
 import { ContactsCollection } from "../../collections";

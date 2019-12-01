@@ -5,6 +5,7 @@ import { AuthListener } from "../auth/ui/components";
 import MainPage from "./mainPage";
 import MessagingPage from "../messaging/ui/pages/MessagingPage";
 import TransportSettingsPage from "../transports/ui/pages/TransportSettingsPage";
+import BaseLayout from "../layouts/components/BaseLayout";
 
 export function AppRouter(props) {
   return (
@@ -14,10 +15,14 @@ export function AppRouter(props) {
       </Route>
       <Switch>
         <Route path="/messaging">
-          <MessagingPage />
+          <BaseLayout>
+            <MessagingPage />
+          </BaseLayout>
         </Route>
         <Route path="/transports">
-          <TransportSettingsPage />
+          <BaseLayout>
+            <TransportSettingsPage />
+          </BaseLayout>
         </Route>
         <Route path="/login">
           <LoginPage />
