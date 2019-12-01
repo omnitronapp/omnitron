@@ -40,8 +40,8 @@ export default withTracker(({ contactId }) => {
     .groupBy(function(obj) {
       return moment(obj.createdAt).format("DD.MM.YYYY");
     })
-    .sortBy(function(v, k) {
-      return k;
+    .sortBy(function(messageGroup) {
+      return messageGroup[0].createdAt;
     })
     .value();
 

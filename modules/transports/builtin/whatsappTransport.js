@@ -39,7 +39,7 @@ export class Transport extends EventEmitter {
     this.credentials = credentials;
 
     Rest.post("/whatsapp/status", (req, res) => {
-      console.log(req.body);
+      // TODO: Handle status message
       res.send({});
     });
 
@@ -47,6 +47,8 @@ export class Transport extends EventEmitter {
       "/whatsapp/webhook",
       Meteor.bindEnvironment((req, res) => {
         const message = req.body;
+
+        const response = new Twilio.twiml.MessagingResponse();
 
         const date = Date.now();
 
@@ -59,13 +61,29 @@ export class Transport extends EventEmitter {
           chatId: message.From,
           date: date,
           text: message.Body,
+          type: "plain",
           channel: "whatsapp"
         };
 
+        if (message.NumMedia) {
+          // process all media objects
+          for (let i = 0; i < message.NumMedia; i++) {
+            const mediaType = message[`MediaContentType${i}`];
+            if (mediaType === "image/jpeg") {
+              messageData.type = "photo";
+              messageData.photo = message[`MediaUrl${i}`];
+              messageData.previewPhoto = message[`MediaUrl${i}`];
+            }
+          }
+        }
+
         this.emit("message", {
-          parsedMessage,
+          parsedMessage: messageData,
           rawMessage: message
         });
+
+        res.type("text/xml");
+        res.send(response.toString());
       })
     );
   }

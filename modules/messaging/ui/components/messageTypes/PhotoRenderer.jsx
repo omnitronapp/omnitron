@@ -12,6 +12,9 @@ const useStyles = makeStyles(theme => ({
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3)
+  },
+  previewPhoto: {
+    width: "100%"
   }
 }));
 
@@ -30,7 +33,7 @@ export default function PhotoRenderer({ message }) {
 
   return (
     <>
-      <img src={message.previewPhoto} onClick={handleOpen} />
+      <img src={message.previewPhoto} className={classes.previewPhoto} onClick={handleOpen} />
       <Modal
         className={classes.modal}
         aria-labelledby="simple-modal-title"

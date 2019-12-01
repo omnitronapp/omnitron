@@ -99,7 +99,7 @@ Meteor.methods({
       },
       {
         sort: {
-          createdDate: -1
+          createdAt: -1
         }
       }
     );
@@ -109,7 +109,7 @@ Meteor.methods({
       contactId,
       message,
       channel: lastUsedChannel,
-      createdDate: new Date()
+      createdAt: new Date()
     });
 
     ContactsCollection.update(

@@ -6,5 +6,5 @@ Meteor.publish("messages", function({ contactId }) {
     return this.ready();
   }
 
-  return MessagesCollection.find({ contactId });
+  return MessagesCollection.find({ contactId }, { sort: { createdAt: 1 } });
 });

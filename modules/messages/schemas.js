@@ -7,7 +7,28 @@ export const MessageSchema = new SimpleSchema({
   channel: {
     type: String
   },
+  type: {
+    type: String,
+    optional: true,
+    defaultValue: "plain"
+  },
   message: {
+    type: String,
+    optional: true
+  },
+  userId: {
+    type: String,
+    optional: true
+  },
+  username: {
+    type: String,
+    optional: true
+  },
+  firstName: {
+    type: String,
+    optional: true
+  },
+  rawMessageId: {
     type: String,
     optional: true
   },
