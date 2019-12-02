@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Divider, Box } from "@material-ui/core";
 
-import ContactSearch from "../../../contacts/ui/components/ContactSearch";
-import ContactsList from "../../../contacts/ui/components/ContactsList";
-import ChatLayout from "./ChatLayout";
+import ChatSearch from "../../../chats/ui/components/ChatSearch";
+import ChatsListWrapper from "../../../chats/ui/components/ChatsListWrapper";
+import ChatLayout from "../../../chats/ui/components/ChatLayout";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,44 +15,42 @@ const useStyles = makeStyles(theme => ({
     height: "100%",
     overflow: "hidden"
   },
-  contactsGrid: {
+  chatsGrid: {
     height: "100%"
   }
 }));
 
 export default function MessagingPage() {
-  const [currentContactId, setContactId] = useState(null);
-  const [searchContact, setSearchContact] = useState("");
+  const [currentChatId, setChatId] = useState(null);
+  const [searchChat, setSearchChat] = useState("");
 
-  function onContactSelect(contactId) {
-    setContactId(contactId);
+  function onChatSelect(chatId) {
+    setChatId(chatId);
   }
 
-  const onSearchContact = function(text) {
-    setSearchContact(text);
-    setContactId(null);
+  const onChatSearch = function(text) {
+    setSearchChat(text);
+    setChatId(null);
   };
 
   const classes = useStyles();
 
   return (
-    <>
-      <Grid container className={classes.root} justify="center" spacing={0}>
-        <Grid item xs={4} className={classes.contactsGrid}>
-          <Box height="calc(100% - 50px)">
-            <ContactSearch searchContact={searchContact} onSearchContact={onSearchContact} />
-            <Divider />
-            <ContactsList
-              searchContact={searchContact}
-              contactId={currentContactId}
-              onContactSelect={onContactSelect}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={8} className={classes.messagesGrid}>
-          <ChatLayout contactId={currentContactId} />
-        </Grid>
+    <Grid container className={classes.root} justify="center" spacing={0}>
+      <Grid item xs={4} className={classes.chatsGrid}>
+        <Box height="calc(100% - 50px)">
+          <ChatSearch searchChat={searchChat} onChatSearch={onChatSearch} />
+          <Divider />
+          <ChatsListWrapper
+            searchChat={searchChat}
+            chatId={currentChatId}
+            onChatSelect={onChatSelect}
+          />
+        </Box>
       </Grid>
-    </>
+      <Grid item xs={8} className={classes.messagesGrid}>
+        <ChatLayout chatId={currentChatId} />
+      </Grid>
+    </Grid>
   );
 }

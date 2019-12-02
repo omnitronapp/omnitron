@@ -5,10 +5,10 @@ import React from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
-import { ContactItem } from "./ContactItem";
+import ChatItem from "./ChatItem";
 import InfiniteScroll from "react-infinite-scroller";
 
-import { ContactsCollection } from "../../collections";
+import { ChatsCollection } from "../../../chats/collections";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,16 +22,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ShowContacts({ contacts, contactId, ready, onContactSelect, incrementPage, page }) {
+function ChatsList({ chats, chatId, ready, onChatSelect, incrementPage, page }) {
   const classes = useStyles();
 
-  const contactsRender = contacts.map(contact => {
+  const chatsRender = chats.map(chat => {
     return (
-      <ContactItem
-        key={contact._id}
-        {...contact}
-        selected={contact._id === contactId}
-        onContactSelect={onContactSelect}
+      <ChatItem
+        key={chat._id}
+        {...chat}
+        selected={chat._id === chatId}
+        onChatSelect={onChatSelect}
       />
     );
   });
@@ -43,24 +43,24 @@ function ShowContacts({ contacts, contactId, ready, onContactSelect, incrementPa
   return (
     <List className={classes.root}>
       <InfiniteScroll pageStart={page} loadMore={loadMore} hasMore={false}>
-        {contactsRender}
+        {chatsRender}
       </InfiniteScroll>
     </List>
   );
 }
 
-export default withTracker(({ searchContact, page }) => {
+export default withTracker(({ searchChat, page }) => {
   const options = {
     limit: page * 10,
     sort: {
       latestActiveDate: -1
     }
   };
-  const subHandler = Meteor.subscribe("contacts", searchContact, options);
-  const contacts = ContactsCollection.find({}, { sort: { latestActiveDate: -1 } }).fetch();
+  const subHandler = Meteor.subscribe("chats", searchChat, options);
+  const chats = ChatsCollection.find({}, { sort: { latestActiveDate: -1 } }).fetch();
 
   return {
-    contacts,
+    chats,
     ready: subHandler.ready()
   };
-})(ShowContacts);
+})(ChatsList);

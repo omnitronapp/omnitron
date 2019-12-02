@@ -20,11 +20,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ContactSearch({ onSearchContact, searchContact }) {
+export default function ChatSearch({ onChatSearch, searchChat }) {
   const classes = useStyles();
 
   const onInputChange = function(event) {
-    onSearchContact(event.target.value);
+    onChatSearch(event.target.value);
   };
 
   return (
@@ -34,7 +34,7 @@ export default function ContactSearch({ onSearchContact, searchContact }) {
         placeholder="Search"
         inputProps={{ "aria-label": "search" }}
         onChange={onInputChange}
-        value={searchContact}
+        value={searchChat}
       />
       <IconButton className={classes.iconButton} aria-label="search">
         <SearchIcon />

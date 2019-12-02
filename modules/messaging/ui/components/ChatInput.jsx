@@ -17,14 +17,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ChatInput({ contactId }) {
+export default function ChatInput({ chatId }) {
   const [text, setText] = useState("");
 
   function sendMessage() {
     Meteor.call(
       "createMessage",
       {
-        contactId,
+        chatId,
         message: text
       },
       (err, res) => {

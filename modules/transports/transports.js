@@ -1,4 +1,4 @@
-import { UserChannels } from "../channels/collection";
+import { ChatsCollection } from "../chats/collections";
 import { TransportsCollection } from "./collections";
 
 export class Transports {
@@ -72,16 +72,17 @@ export class Transports {
     return this.transports[channel];
   }
 
-  sendMessage(channel, contactId, message) {
-    const userChannel = UserChannels.findOne({
-      contactId,
-      channel: channel
+  sendMessage(channel, chatId, message) {
+    const userChat = ChatsCollection.findOne({
+      _id: chatId
     });
 
     const transport = this.getTransport(channel);
 
-    if (transport && userChannel) {
-      transport.sendMessage(userChannel.chatId, message);
+    if (transport && userChat) {
+      transport.sendMessage(userChat.channelChatId, message);
+    } else {
+      console.error("chat not found");
     }
   }
 }

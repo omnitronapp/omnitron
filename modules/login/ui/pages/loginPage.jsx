@@ -76,8 +76,6 @@ function LoginPage({ history }) {
     event.preventDefault();
 
     if (credentials.email === "" || credentials.password === "") {
-      // TODO: throw notification error
-
       return toast.error("Введите email и пароль");
     }
 

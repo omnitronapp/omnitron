@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { Grid } from "@material-ui/core";
 import ChatWindow from "./ChatWindow";
-import ChatInput from "../components/ChatInput";
+import ChatInput from "../../../messaging/ui/components/ChatInput";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,21 +33,18 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ChatLayout({ contactId }) {
+export default function ChatLayout({ chatId }) {
   const classes = useStyles();
 
   function showChat() {
-    if (!contactId) {
+    if (!chatId) {
       return (
         <Typography className={classes.noChat} component="h1" variant="h5">
           Выберите чат
         </Typography>
       );
     } else {
-      return [
-        <ChatWindow key="chat" contactId={contactId} />,
-        <ChatInput key="input" contactId={contactId} />
-      ];
+      return [<ChatWindow key="chat" chatId={chatId} />, <ChatInput key="input" chatId={chatId} />];
     }
   }
 

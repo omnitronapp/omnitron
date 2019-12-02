@@ -1,8 +1,12 @@
 import SimpleSchema from "simpl-schema";
 
 export const MessageSchema = new SimpleSchema({
-  contactId: {
+  chatId: {
     type: String
+  },
+  contactId: {
+    type: String,
+    optional: true
   },
   channel: {
     type: String

@@ -4,7 +4,7 @@ import { MessagesCollection, RawMessagesCollection } from "../collections";
 
 import { trimMessage } from "../../utils";
 import { ContactsCollection } from "../../contacts/collections";
-import { UserChannels } from "../../channels/collection";
+import { ChatsCollection } from "../../chats/collections";
 import { Transports } from "../../transports";
 
 Meteor.methods({
@@ -23,43 +23,54 @@ Meteor.methods({
     } catch (e) {
       console.error(e);
     }
-    /**
-      {
-        messageId: message_id
-        userId: from.id
-        username: from.username
-        firstName: chat.first_name
-        chatId: chat.id
-        date: date
-        text: text
-        channel: "telegram"
-      }
-     */
-    const existingUserChannel = UserChannels.findOne({
+
+    const existingChat = ChatsCollection.findOne({
       channel: parsedMessage.channel,
-      chatId: parsedMessage.chatId,
-      channelContactId: parsedMessage.contactId
+      channelChatId: parsedMessage.channelChatId
     });
 
+    let chatId = undefined;
     let contactId = undefined;
-    if (existingUserChannel) {
-      contactId = existingUserChannel.contactId;
-    } else {
+    if (existingChat) {
+      chatId = existingChat._id;
+
+      const contactEntry = existingChat.contactIds.find(
+        item => item.channelContactId === parsedMessage.userId
+      );
+
+      if (contactEntry) {
+        contactId = contactEntry.contactId;
+      }
+    }
+
+    if (!existingChat) {
       contactId = ContactsCollection.insert({
         name: parsedMessage.firstName || parsedMessage.username,
         channels: [parsedMessage.channel]
       });
 
-      UserChannels.insert({
+      chatId = ChatsCollection.insert({
+        name: parsedMessage.chatName,
+        type: "single",
         channel: parsedMessage.channel,
-        contactId,
-        channelContactId: parsedMessage.userId,
-        chatId: parsedMessage.chatId
+        channelChatId: parsedMessage.channelChatId,
+        contactIds: [
+          {
+            contactId,
+            channelContactId: parsedMessage.userId
+          }
+        ]
       });
+    }
+
+    // TODO chat exists but contact not: case when group messages are processed
+    if (existingChat && !contactId) {
+      // complete this
     }
 
     const messageId = MessagesCollection.insert({
       ...parsedMessage,
+      chatId,
       contactId,
       rawMessageId,
       channel: parsedMessage.channel,
@@ -68,8 +79,8 @@ Meteor.methods({
       inbound: true
     });
 
-    ContactsCollection.update(
-      { _id: contactId },
+    ChatsCollection.update(
+      { _id: chatId },
       {
         $set: {
           lastMessageId: messageId,
@@ -80,13 +91,14 @@ Meteor.methods({
     );
 
     return {
+      chatId,
       contactId,
       messageId,
       rawMessageId
     };
   },
-  createMessage({ contactId, message }) {
-    check(contactId, String);
+  createMessage({ chatId, message }) {
+    check(chatId, String);
     check(message, String);
 
     if (message === "") {
@@ -95,7 +107,7 @@ Meteor.methods({
 
     const lastMessage = MessagesCollection.findOne(
       {
-        contactId
+        chatId
       },
       {
         sort: {
@@ -106,15 +118,15 @@ Meteor.methods({
 
     const lastUsedChannel = lastMessage ? lastMessage.channel : "omnitron";
     const messageId = MessagesCollection.insert({
-      contactId,
+      chatId,
       message,
       channel: lastUsedChannel,
       createdAt: new Date()
     });
 
-    ContactsCollection.update(
+    ChatsCollection.update(
       {
-        _id: contactId
+        _id: chatId
       },
       {
         $set: {
@@ -124,6 +136,6 @@ Meteor.methods({
       }
     );
 
-    Transports.sendMessage(lastUsedChannel, contactId, message);
+    Transports.sendMessage(lastUsedChannel, chatId, message);
   }
 });

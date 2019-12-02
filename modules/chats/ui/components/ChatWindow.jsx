@@ -5,7 +5,7 @@ import moment from "moment";
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
 import { MessagesCollection } from "../../../messages/collections";
-import MessageGroup from "../components/MessageGroup";
+import MessageGroup from "../../../messaging/ui/components/MessageGroup";
 import _ from "underscore";
 
 const useStyles = makeStyles(theme => ({
@@ -18,12 +18,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ChatWindow({ messages, dividedMessages }) {
+function ChatWindow({ groupedMessages }) {
   const classes = useStyles();
 
   return (
     <Paper square elevation={0} className={classes.root}>
-      {dividedMessages.map(messages => {
+      {groupedMessages.map(messages => {
         const createdAt = messages[0].createdAt;
         const date = moment(createdAt).format("dddd, MMM DD, YYYY");
         return <MessageGroup key={date} messages={messages} date={date} />;
@@ -32,11 +32,11 @@ function ChatWindow({ messages, dividedMessages }) {
   );
 }
 
-export default withTracker(({ contactId }) => {
-  const subHandler = Meteor.subscribe("messages", { contactId });
+export default withTracker(({ chatId }) => {
+  const subHandler = Meteor.subscribe("messages", { chatId });
   const messages = MessagesCollection.find({}, { sort: { createdAt: 1 } }).fetch();
 
-  let dateGroups = _.chain(messages)
+  let messageGroupsByDate = _.chain(messages)
     .groupBy(function(obj) {
       return moment(obj.createdAt).format("DD.MM.YYYY");
     })
@@ -48,6 +48,6 @@ export default withTracker(({ contactId }) => {
   return {
     messages,
     ready: subHandler.ready(),
-    dividedMessages: dateGroups
+    groupedMessages: messageGroupsByDate
   };
 })(ChatWindow);
