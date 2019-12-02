@@ -31,6 +31,8 @@ Meteor.methods({
 
     let chatId = undefined;
     let contactId = undefined;
+
+    // Chat exists
     if (existingChat) {
       chatId = existingChat._id;
 
@@ -43,6 +45,7 @@ Meteor.methods({
       }
     }
 
+    // Chat does not exists, create new one
     if (!existingChat) {
       contactId = ContactsCollection.insert({
         name: parsedMessage.firstName || parsedMessage.username,
@@ -63,9 +66,30 @@ Meteor.methods({
       });
     }
 
-    // TODO chat exists but contact not: case when group messages are processed
+    // Chat exists, but contact does not: case in group messages
     if (existingChat && !contactId) {
-      // complete this
+      contactId = ContactsCollection.insert({
+        name: parsedMessage.firstName || parsedMessage.username,
+        channels: [parsedMessage.channel]
+      });
+
+      const contactIds = [
+        ...existingChat.contactIds,
+        {
+          contactId,
+          channelContactId: parsedMessage.userId
+        }
+      ];
+
+      ChatsCollection.update(
+        { _id: chatId },
+        {
+          $set: {
+            type: "group",
+            contactIds
+          }
+        }
+      );
     }
 
     const messageId = MessagesCollection.insert({

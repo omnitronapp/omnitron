@@ -13,7 +13,7 @@ export const ChatSchema = new SimpleSchema({
     type: String
   },
   channelChatId: {
-    type: String
+    type: SimpleSchema.oneOf(String, Number)
   },
   contactIds: {
     type: Array,
