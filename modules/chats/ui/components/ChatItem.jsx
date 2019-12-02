@@ -1,6 +1,23 @@
 import React from "react";
 
-import { Avatar, ListItem, ListItemText, ListItemAvatar } from "@material-ui/core";
+import {
+  Avatar,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  ListItemSecondaryAction
+} from "@material-ui/core";
+import { WhatsApp, Telegram } from "@material-ui/icons";
+
+function getChannelIcon(channel) {
+  if (channel === "whatsapp") {
+    return WhatsApp;
+  } else if (channel === "telegram") {
+    return Telegram;
+  }
+
+  return null;
+}
 
 export default function ChatItem({
   _id,
@@ -8,11 +25,14 @@ export default function ChatItem({
   name,
   lastMessageTrimmed,
   selected,
+  channel,
   onChatSelect
 }) {
   function onClick() {
     onChatSelect(_id);
   }
+
+  const ChannelIcon = getChannelIcon(channel);
 
   return (
     <ListItem button selected={selected} onClick={onClick}>
@@ -22,6 +42,9 @@ export default function ChatItem({
         </Avatar>
       </ListItemAvatar>
       <ListItemText primary={name} secondary={lastMessageTrimmed} />
+      <ListItemSecondaryAction>
+        <ChannelIcon />
+      </ListItemSecondaryAction>
     </ListItem>
   );
 }
