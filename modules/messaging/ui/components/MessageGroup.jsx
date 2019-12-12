@@ -1,7 +1,8 @@
 import React from "react";
 import moment from "moment";
-import { makeStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+
+import { Typography, makeStyles } from "@material-ui/core";
+
 import ChatMessage from "./ChatMessage";
 
 const useStyles = makeStyles(theme => ({

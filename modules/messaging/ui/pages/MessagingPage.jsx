@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Divider, Box } from "@material-ui/core";
+import { Grid, Divider, Box, makeStyles } from "@material-ui/core";
 
 import ChatSearch from "../../../chats/ui/components/ChatSearch";
 import ChatsListWrapper from "../../../chats/ui/components/ChatsListWrapper";

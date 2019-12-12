@@ -5,17 +5,20 @@ import { withRouter } from "react-router-dom";
 
 import { toast } from "react-toastify";
 
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import {
+  Avatar,
+  Button,
+  Container,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Box,
+  Typography,
+  makeStyles
+} from "@material-ui/core";
+
+import { LockOutlinedIcon } from "@material-ui/icons/LockOutlined";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -76,12 +79,12 @@ function LoginPage({ history }) {
     event.preventDefault();
 
     if (credentials.email === "" || credentials.password === "") {
-      return toast.error("Введите email и пароль");
+      return toast.error("Email or password is empty");
     }
 
     Meteor.loginWithPassword({ username: credentials.email }, credentials.password, err => {
       if (err) {
-        return toast.error("Такого пользователя не существует");
+        return toast.error("User does not exists");
       }
 
       history.push("/messaging");
@@ -96,7 +99,7 @@ function LoginPage({ history }) {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Войти в систему
+          Sign in
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
@@ -118,7 +121,7 @@ function LoginPage({ history }) {
             required
             fullWidth
             name="password"
-            label="Пароль"
+            label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -133,12 +136,12 @@ function LoginPage({ history }) {
             className={classes.submit}
             onClick={onLogin}
           >
-            Войти
+            Login
           </Button>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
-                Забыли пароль?
+                Forgot password?
               </Link>
             </Grid>
           </Grid>

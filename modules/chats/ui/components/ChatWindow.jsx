@@ -2,11 +2,12 @@ import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 import React from "react";
 import moment from "moment";
-import { makeStyles } from "@material-ui/core/styles";
-import { Paper } from "@material-ui/core";
-import { MessagesCollection } from "../../../messages/collections";
-import MessageGroup from "../../../messaging/ui/components/MessageGroup";
 import _ from "underscore";
+
+import { Paper, makeStyles } from "@material-ui/core";
+
+import { MessagesCollection } from "../../../messaging/collections";
+import MessageGroup from "../../../messaging/ui/components/MessageGroup";
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -2,12 +2,10 @@ import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 
 import React from "react";
-
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ChatItem from "./ChatItem";
 import InfiniteScroll from "react-infinite-scroller";
+import { List, makeStyles } from "@material-ui/core/";
 
+import ChatItem from "./ChatItem";
 import { ChatsCollection } from "../../../chats/collections";
 
 const useStyles = makeStyles(theme => ({

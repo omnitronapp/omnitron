@@ -9,7 +9,6 @@ Meteor.methods({
     check(enabled, Boolean);
 
     const transportEntry = TransportsCollection.findOne(_id);
-    const transportImpl = Transports.getTransport(transportEntry.name);
 
     if (enabled) {
       TransportsCollection.update(_id, {
@@ -26,7 +25,7 @@ Meteor.methods({
         }
       });
 
-      transportImpl.stop();
+      Transports.stop(transportEntry.name)
     }
   },
   updateTransportCredential(_id, key, value) {

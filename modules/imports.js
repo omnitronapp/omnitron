@@ -1,5 +1,5 @@
 import "./auth";
 import "./chats";
 import "./contacts";
-import "./messages";
+import "./messaging";
 import "./rest";

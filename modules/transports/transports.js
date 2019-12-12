@@ -68,8 +68,9 @@ export class Transports {
   getTransports() {
     return this.transports;
   }
-  getTransport(channel) {
-    return this.transports[channel];
+
+  getTransport(name) {
+    return this.transports[name];
   }
 
   sendMessage(channel, chatId, message) {
@@ -84,5 +85,10 @@ export class Transports {
     } else {
       console.error("chat not found");
     }
+  }
+
+  stop(name){
+    const transportImpl = this.getTransport(channel);
+    transportImpl.stop();
   }
 }

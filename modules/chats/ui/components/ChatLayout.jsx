@@ -1,8 +1,7 @@
 import React from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import { Grid } from "@material-ui/core";
+import { Typography, Grid, makeStyles } from "@material-ui/core";
+
 import ChatWindow from "./ChatWindow";
 import ChatInput from "../../../messaging/ui/components/ChatInput";
 
@@ -40,7 +39,7 @@ export default function ChatLayout({ chatId }) {
     if (!chatId) {
       return (
         <Typography className={classes.noChat} component="h1" variant="h5">
-          Выберите чат
+          Select a chat
         </Typography>
       );
     } else {

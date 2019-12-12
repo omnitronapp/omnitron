@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
-import { makeStyles } from "@material-ui/core/styles";
-import { Paper, ListItem, Grid, Typography } from "@material-ui/core";
+
+import { Paper, ListItem, Grid, Typography, makeStyles } from "@material-ui/core";
 
 import PlainMessage from "./messageTypes/PlainMessage";
 import PhotoRenderer from "./messageTypes/PhotoRenderer";
