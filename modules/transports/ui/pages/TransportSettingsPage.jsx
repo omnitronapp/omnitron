@@ -14,7 +14,7 @@ import {
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 import { TransportsCollection } from "../../collections";
-import { LoadingScreen } from "../../../layouts/components/loadingScreen";
+import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
 
 function a11yProps(index) {
