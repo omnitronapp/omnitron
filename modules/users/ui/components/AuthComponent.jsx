@@ -1,7 +1,7 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import { LoadingScreen } from "../../../loading/ui/loadingScreen";
+import { LoadingScreen } from "../../../layouts/components/loadingScreen";
 
 // The root component will render the project pages and components when user is ready
 function AuthComponent({ subReady, children }) {
