@@ -46,13 +46,13 @@ export class Transport extends EventEmitter {
     }
     this.handlersCreated = true;
 
-    Rest.post("/whatsapp/status", (req, res) => {
+    Rest.post("/webhook/whatsapp/status", (req, res) => {
       // TODO: Handle status message
       res.send({});
     });
 
     Rest.post(
-      "/whatsapp/webhook",
+      "/webhook/whatsapp",
       Meteor.bindEnvironment((req, res) => {
         const message = req.body;
 
