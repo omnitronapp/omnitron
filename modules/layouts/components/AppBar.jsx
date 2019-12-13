@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import {
   AppBar,
   Button,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function TopAppBar(props) {
+function TopAppBar({ history }) {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -43,6 +43,12 @@ export function TopAppBar(props) {
 
   function handleLogout() {
     Meteor.logout();
+    setAnchorEl(null);
+  }
+
+  function handleProfile() {
+    history.push("/profile");
+    setAnchorEl(null);
   }
 
   return (
@@ -81,9 +87,12 @@ export function TopAppBar(props) {
           open={open}
           onClose={handleClose}
         >
+          <MenuItem onClick={handleProfile}>Profile</MenuItem>
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
   );
 }
+
+export default withRouter(TopAppBar);

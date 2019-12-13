@@ -2,7 +2,7 @@ import React from "react";
 
 import { CssBaseline, makeStyles } from "@material-ui/core/";
 
-import { TopAppBar } from "./AppBar";
+import TopAppBar from "./AppBar";
 
 const useStyles = makeStyles(theme => ({
   root: {

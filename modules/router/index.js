@@ -7,6 +7,8 @@ import MessagingPage from "../messaging/ui/pages/MessagingPage";
 import TransportSettingsPage from "../transports/ui/pages/TransportSettingsPage";
 import BaseLayout from "../layouts/components/BaseLayout";
 
+import ProfilePage from "../user/ui/pages/ProfilePage";
+
 export function AppRouter(props) {
   return (
     <Router>
@@ -14,6 +16,11 @@ export function AppRouter(props) {
         <MainPage />
       </Route>
       <Switch>
+        <Route path="/profile">
+          <BaseLayout>
+            <ProfilePage />
+          </BaseLayout>
+        </Route>
         <Route path="/messaging">
           <BaseLayout>
             <MessagingPage />
