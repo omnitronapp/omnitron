@@ -25,7 +25,7 @@ Meteor.methods({
         }
       });
 
-      Transports.stop(transportEntry.name)
+      Transports.stop(transportEntry.name);
     }
   },
   updateTransportCredential(_id, key, value) {

@@ -44,6 +44,7 @@ export class Transports {
     if (transportEntry) {
       if (transportEntry.enabled) {
         transport.configure(transportEntry);
+        transport.configureHandlers(transportEntry);
 
         transport.on(
           "message",
@@ -87,8 +88,8 @@ export class Transports {
     }
   }
 
-  stop(name){
-    const transportImpl = this.getTransport(channel);
+  stop(name) {
+    const transportImpl = this.getTransport(name);
     transportImpl.stop();
   }
 }

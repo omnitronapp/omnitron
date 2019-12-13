@@ -9,6 +9,7 @@ export class Transport extends EventEmitter {
     this.name = "whatsapp";
     this.channel = "whatsapp";
     this.title = "Whatsapp (Twilio)";
+    this.handlersCreated = false;
   }
 
   requireCredentials() {
@@ -37,6 +38,13 @@ export class Transport extends EventEmitter {
 
     this.client = new Twilio(credentials.accountSid, credentials.authToken);
     this.credentials = credentials;
+  }
+
+  configureHandlers() {
+    if (this.handlersCreated) {
+      return;
+    }
+    this.handlersCreated = true;
 
     Rest.post("/whatsapp/status", (req, res) => {
       // TODO: Handle status message

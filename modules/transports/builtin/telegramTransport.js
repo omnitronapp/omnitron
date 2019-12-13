@@ -9,6 +9,8 @@ export class Transport extends EventEmitter {
     this.name = "telegram";
     this.channel = "telegram";
     this.title = "Telegram";
+
+    this.handlersCreated = false;
   }
 
   requireCredentials() {
@@ -25,17 +27,31 @@ export class Transport extends EventEmitter {
     if (!credentials || Object.keys(credentials) === 0) {
       throw new Error(`${this.name} transport credentails not provided`);
     }
-    const bot = new Telegraf(credentials.token);
+    if (this.bot) {
+      this.bot.token = credentials.token;
+    } else {
+      this.bot = new Telegraf(credentials.token);
+    }
 
-    bot.on(["photo", "document"], ctx => {
+    this.bot.launch();
+    this.credentials = credentials;
+  }
+
+  configureHandlers() {
+    if (this.handlersCreated) {
+      return;
+    }
+    this.handlersCreated = true;
+
+    this.bot.on(["photo", "document"], ctx => {
       try {
         const { message } = ctx;
         const previewPhotoId = message.photo[0].file_id;
         const photoId = message.photo[message.photo.length - 1].file_id;
 
         const retrieveFilesPromises = [
-          bot.telegram.getFileLink(previewPhotoId),
-          bot.telegram.getFileLink(photoId)
+          this.bot.telegram.getFileLink(previewPhotoId),
+          this.bot.telegram.getFileLink(photoId)
         ];
 
         Promise.all(retrieveFilesPromises)
@@ -69,7 +85,7 @@ export class Transport extends EventEmitter {
       }
     });
 
-    bot.on("text", ctx => {
+    this.bot.on("text", ctx => {
       const { message } = ctx;
 
       const date = Date.now();
@@ -92,11 +108,6 @@ export class Transport extends EventEmitter {
         rawMessage: message
       });
     });
-
-    bot.launch();
-
-    this.credentials = credentials;
-    this.bot = bot;
   }
 
   sendMessage(chatId, message) {
@@ -112,7 +123,9 @@ export class Transport extends EventEmitter {
   stop() {
     this.credentials = null;
     if (this.bot) {
-      this.bot.stop();
+      this.bot.stop(() => {
+        console.error("tg bot stopped");
+      });
     }
   }
 }

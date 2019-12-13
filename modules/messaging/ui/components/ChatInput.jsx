@@ -3,7 +3,7 @@ import { Meteor } from "meteor/meteor";
 import React, { useState, Fragment } from "react";
 
 import { Grid, TextField, IconButton, makeStyles } from "@material-ui/core";
-import { SendIcon } from "@material-ui/icons";
+import { Send } from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
   grid: {
@@ -52,7 +52,7 @@ export default function ChatInput({ chatId }) {
       />
       <Fragment>
         <IconButton onClick={sendMessage} disabled={text.trim().length === 0} color="primary">
-          <SendIcon />
+          <Send />
         </IconButton>
       </Fragment>
     </Grid>
