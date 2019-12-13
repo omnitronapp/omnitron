@@ -3,7 +3,7 @@ import React from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
 
 import ChatWindow from "./ChatWindow";
-import ChatInput from "../../../messaging/ui/components/ChatInput";
+import ChatInput from "../ChatInput";
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -87,7 +87,7 @@ function LoginPage({ history }) {
         return toast.error("User does not exists");
       }
 
-      history.push("/messaging");
+      history.push("/chats");
     });
   }
 

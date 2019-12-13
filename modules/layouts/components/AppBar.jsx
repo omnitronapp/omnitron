@@ -57,8 +57,8 @@ function TopAppBar({ history }) {
         <Typography variant="h6" noWrap className={classes.title}>
           Omnitron
         </Typography>
-        <Link to="/messaging" className={classes.appBarMenuLinks}>
-          <Button color="inherit">Messages</Button>
+        <Link to="/chats" className={classes.appBarMenuLinks}>
+          <Button color="inherit">Chats</Button>
         </Link>
         <Link to="/transports" className={classes.appBarMenuLinks}>
           <Button color="inherit">Transports</Button>

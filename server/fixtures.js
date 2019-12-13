@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { ContactsCollection } from "../modules/contacts/collections";
-import { MessagesCollection } from "../modules/messaging/collections";
+import { MessagesCollection } from "../modules/chats/collections";
 
 if (Meteor.users.find().count() === 0) {
   Accounts.createUser({ username: "omnitron", password: "omnitron" });

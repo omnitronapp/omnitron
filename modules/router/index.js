@@ -1,13 +1,15 @@
 import React from "react";
-import { LoginPage } from "../login/ui/pages/";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { AuthListener } from "../auth/ui/components";
-import MainPage from "./mainPage";
-import MessagingPage from "../messaging/ui/pages/MessagingPage";
-import TransportSettingsPage from "../transports/ui/pages/TransportSettingsPage";
+
+import { AuthListener } from "../users/ui/components";
 import BaseLayout from "../layouts/components/BaseLayout";
 
-import ProfilePage from "../user/ui/pages/ProfilePage";
+import MainPage from "./mainPage";
+import ChatsPage from "../chats/ui/pages/ChatsPage";
+import TransportSettingsPage from "../transports/ui/pages/TransportSettingsPage";
+import LoginPage from "../users/ui/pages/loginPage";
+
+import ProfilePage from "../users/ui/pages/ProfilePage";
 
 export function AppRouter(props) {
   return (
@@ -21,9 +23,9 @@ export function AppRouter(props) {
             <ProfilePage />
           </BaseLayout>
         </Route>
-        <Route path="/messaging">
+        <Route path="/chats">
           <BaseLayout>
-            <MessagingPage />
+            <ChatsPage />
           </BaseLayout>
         </Route>
         <Route path="/transports">

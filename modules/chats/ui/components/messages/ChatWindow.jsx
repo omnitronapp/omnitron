@@ -6,8 +6,8 @@ import _ from "underscore";
 
 import { Paper, makeStyles } from "@material-ui/core";
 
-import { MessagesCollection } from "../../../messaging/collections";
-import MessageGroup from "../../../messaging/ui/components/MessageGroup";
+import { MessagesCollection } from "../../../collections";
+import MessageGroup from "./MessageGroup";
 
 const useStyles = makeStyles(theme => ({
   root: {

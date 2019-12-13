@@ -6,7 +6,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import { List, makeStyles } from "@material-ui/core/";
 
 import ChatItem from "./ChatItem";
-import { ChatsCollection } from "../../../chats/collections";
+import { ChatsCollection } from "../../../collections";
 
 const useStyles = makeStyles(theme => ({
   root: {

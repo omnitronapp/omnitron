@@ -1,5 +1,5 @@
 import React from "react";
-import AuthComponent from "../modules/auth/ui/components/AuthComponent";
+import AuthComponent from "../modules/users/ui/components/AuthComponent";
 import { AppRouter } from "../modules/router";
 import { ToastContainer } from "react-toastify";
 

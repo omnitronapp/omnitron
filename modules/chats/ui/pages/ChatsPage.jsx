@@ -2,9 +2,9 @@ import React, { useState } from "react";
 
 import { Grid, Divider, Box, makeStyles } from "@material-ui/core";
 
-import ChatSearch from "../../../chats/ui/components/ChatSearch";
-import ChatsListWrapper from "../../../chats/ui/components/ChatsListWrapper";
-import ChatLayout from "../../../chats/ui/components/ChatLayout";
+import ChatSearch from "../components/ChatSearch";
+import ChatsListWrapper from "../components/chatList/ChatsListWrapper";
+import ChatLayout from "../components/messages/ChatLayout";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MessagingPage() {
+export default function ChatsPage() {
   const [currentChatId, setChatId] = useState(null);
   const [searchChat, setSearchChat] = useState("");
 
