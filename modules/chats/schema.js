@@ -76,6 +76,12 @@ export const ChatSchema = new SimpleSchema({
   }
 });
 
+const DocumentSchema = new SimpleSchema({
+  title: String,
+  link: String,
+  size: Number
+});
+
 export const MessageSchema = new SimpleSchema({
   chatId: {
     type: String
@@ -90,7 +96,8 @@ export const MessageSchema = new SimpleSchema({
   type: {
     type: String,
     optional: true,
-    defaultValue: "plain"
+    defaultValue: "plain",
+    allowedValues: ["plain", "photo", "document"]
   },
   message: {
     type: String,
@@ -133,6 +140,18 @@ export const MessageSchema = new SimpleSchema({
   inbound: {
     type: Boolean,
     defaultValue: false,
+    optional: true
+  },
+  previewPhoto: {
+    type: String,
+    optional: true
+  },
+  photo: {
+    type: String,
+    optional: true
+  },
+  document: {
+    type: DocumentSchema,
     optional: true
   }
 });

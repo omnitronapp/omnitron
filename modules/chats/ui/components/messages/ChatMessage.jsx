@@ -5,6 +5,7 @@ import { Paper, ListItem, Grid, Typography, makeStyles } from "@material-ui/core
 
 import PlainMessage from "./messageTypes/PlainMessage";
 import PhotoRenderer from "./messageTypes/PhotoRenderer";
+import DocumentRenderer from "./messageTypes/DocumentRenderer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -53,6 +54,8 @@ const useStyles = makeStyles(theme => ({
 function getMessageRenderer(type) {
   if (type === "photo") {
     return PhotoRenderer;
+  } else if (type === "document") {
+    return DocumentRenderer;
   }
 
   return PlainMessage;
