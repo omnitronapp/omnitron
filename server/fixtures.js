@@ -1,123 +1,72 @@
 import { Meteor } from "meteor/meteor";
+import _ from "underscore";
 import { Accounts } from "meteor/accounts-base";
 import { ContactsCollection } from "../modules/contacts/collections";
-import { MessagesCollection } from "../modules/chats/collections";
+import { MessagesCollection, ChatsCollection } from "../modules/chats/collections";
+
+function randomString() {
+  return (
+    Math.random()
+      .toString(36)
+      .substring(2, 15) +
+    Math.random()
+      .toString(36)
+      .substring(2, 15)
+  );
+}
+
+function randomNumberInRange(min = 1, max = 10000000) {
+  return _.random(min, max);
+}
 
 if (Meteor.users.find().count() === 0) {
   Accounts.createUser({ username: "omnitron", password: "omnitron" });
 
-  //   const contacts = [
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/1.jpg",
-  //       name: "China",
-  //       lastMessageTrimmed: "how are you",
-  //       channels: ["whatsapp", "telegram"]
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/2.jpg",
-  //       name: "Mura",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Nadya",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Vlad",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Jack",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Natasha",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Bob",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Ren",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Ron",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Max",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Mark",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Tor",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Azamat",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Abay",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Abylay",
-  //       lastMessageTrimmed: ""
-  //     },
-  //     {
-  //       avatar: "https://material-ui.com/static/images/avatar/3.jpg",
-  //       name: "Aizhan",
-  //       lastMessageTrimmed: ""
-  //     }
-  //   ];
+  const contacts = Array(5).fill({
+    name: randomString(),
+    avatar: `https://material-ui.com/static/images/avatar/${randomNumberInRange(1, 3)}.jpg`,
+    lastMessageTrimmed: randomString(),
+    channels: ["whatsapp", "telegram"]
+  });
 
-  //   const messages = [
-  //     {
-  //       message: "Hi",
-  //       channel: "whatsapp",
-  //       inbound: true
-  //     },
-  //     {
-  //       message: "how are you",
-  //       channel: "telegram",
-  //       inbound: true
-  //     }
-  //   ];
+  const messages = [
+    {
+      message: "Hi",
+      channel: "telegram",
+      inbound: true
+    },
+    {
+      message: "how are you",
+      channel: "telegram",
+      inbound: true
+    }
+  ];
 
-  //   const contactId = contacts.map(contact => ContactsCollection.insert(contact))[0];
+  const contactId = contacts.map(contact => ContactsCollection.insert(contact))[0];
 
-  //   messages.forEach(message => {
-  //     message.contactId = contactId;
-  //     const messageId = MessagesCollection.insert(message);
+  const chats = new Array(1).fill({
+    type: "single",
+    channelChatId: randomNumberInRange(),
+    name: randomString(),
+    channel: "telegram",
+    contactIds: [
+      {
+        contactId,
+        channelContactId: "telegram"
+      }
+    ]
+  });
 
-  //     ContactsCollection.update(
-  //       {
-  //         _id: contactId
-  //       },
-  //       {
-  //         $set: {
-  //           lastMessageId: messageId
-  //         }
-  //       }
-  //     );
-  //   });
+  const chatId = chats.map(chat => ChatsCollection.insert(chat))[0];
+
+  messages.forEach(message => {
+    message = {
+      ...message,
+      contactId,
+      chatId,
+      username: contacts[0].name,
+      firstName: contacts[0].name
+    };
+    const messageId = MessagesCollection.insert(message);
+  });
 }
