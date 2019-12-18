@@ -4,8 +4,8 @@ import bodyParser from "body-parser";
 
 const Rest = express();
 
-Rest.use(bodyParser.json());
-Rest.use(bodyParser.urlencoded({ extended: true }));
+// Rest.use(bodyParser.json());
+// Rest.use(bodyParser.urlencoded({ extended: true }));
 
 WebApp.connectHandlers.use(Rest);
 

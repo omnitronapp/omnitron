@@ -1,4 +1,4 @@
-export function trimMessage(message, { maxLength = 13, length = 10 }) {
+export function trimMessage(message, maxLength = 13, length = 10) {
   if (!message) {
     return "";
   }
