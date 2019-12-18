@@ -51,6 +51,28 @@ export const ChatSchema = new SimpleSchema({
     autoValue: function() {
       return new Date();
     }
+  },
+  readMessages: {
+    type: Array,
+    optional: true,
+    defaultValue: []
+  },
+  "readMessages.$": {
+    type: Object
+  },
+  "readMessages.$.userId": {
+    type: String
+  },
+  "readMessages.$.count": {
+    type: Number
+  },
+  messagesCount: {
+    type: Number,
+    autoValue: function() {
+      if (this.isInsert) {
+        return 0;
+      }
+    }
   }
 });
 

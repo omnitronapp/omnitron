@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { Meteor } from "meteor/meteor";
 import { Grid, Divider, Box, makeStyles } from "@material-ui/core";
 
 import ChatSearch from "../components/ChatSearch";

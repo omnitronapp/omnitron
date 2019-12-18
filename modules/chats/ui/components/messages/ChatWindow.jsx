@@ -1,12 +1,12 @@
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import React from "react";
+import React, { useEffect } from "react";
 import moment from "moment";
 import _ from "underscore";
 
 import { Paper, makeStyles } from "@material-ui/core";
 
-import { MessagesCollection } from "../../../collections";
+import { MessagesCollection, ChatsCollection } from "../../../collections";
 import MessageGroup from "./MessageGroup";
 
 const useStyles = makeStyles(theme => ({
@@ -19,8 +19,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ChatWindow({ groupedMessages }) {
+function ChatWindow({ groupedMessages, chat, chatId }) {
   const classes = useStyles();
+
+  useEffect(
+    () => {
+      Meteor.call("setReadMessages", chatId);
+    },
+    [chat.messagesCount]
+  );
 
   return (
     <Paper square elevation={0} className={classes.root}>
@@ -49,6 +56,7 @@ export default withTracker(({ chatId }) => {
   return {
     messages,
     ready: subHandler.ready(),
-    groupedMessages: messageGroupsByDate
+    groupedMessages: messageGroupsByDate,
+    chat: ChatsCollection.findOne({ _id: chatId })
   };
 })(ChatWindow);

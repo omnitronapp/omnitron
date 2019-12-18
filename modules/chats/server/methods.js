@@ -110,6 +110,9 @@ Meteor.methods({
           lastMessageId: messageId,
           lastMessageTrimmed: trimMessage(parsedMessage.text),
           latestActiveDate: new Date()
+        },
+        $inc: {
+          messagesCount: 1
         }
       }
     );
@@ -128,6 +131,8 @@ Meteor.methods({
     if (message === "") {
       return;
     }
+
+    const userId = this.userId;
 
     const lastMessage = MessagesCollection.findOne(
       {
@@ -148,6 +153,28 @@ Meteor.methods({
       createdAt: new Date()
     });
 
+    //add readMessages
+    const chat = ChatsCollection.findOne(
+      { _id: chatId },
+      { fields: { messagesCount: 1, readMessages: 1 } }
+    );
+
+    let { readMessages = [], messagesCount } = chat;
+
+    const findUser = readMessages.findIndex(item => item.userId === userId);
+
+    messagesCount += 1;
+
+    if (findUser >= 0) {
+      readMessages[findUser].count = messagesCount;
+    } else {
+      readMessages.push({
+        userId: userId,
+        count: messagesCount
+      });
+    }
+    //end readMessages
+
     ChatsCollection.update(
       {
         _id: chatId
@@ -155,11 +182,61 @@ Meteor.methods({
       {
         $set: {
           lastMessageTrimmed: trimMessage(message),
-          lastMessageId: messageId
+          lastMessageId: messageId,
+          readMessages
+        },
+        $inc: {
+          messagesCount: 1
         }
       }
     );
 
+    Meteor.defer(() => {
+      const chat = ChatsCollection.findOne(
+        { _id: chatId },
+        { fields: { messagesCount: 1, readMessages: 1 } }
+      );
+
+      let { readMessages = [], messagesCount } = chat;
+
+      const findUser = readMessages.findIndex(item => item.userId === userId);
+
+      if (findUser >= 0) {
+        readMessages[findUser].count = messagesCount;
+      } else {
+        readMessages.push({
+          userId: userId,
+          count: messagesCount
+        });
+      }
+    });
+
     Transports.sendMessage(lastUsedChannel, chatId, message);
+  },
+  setReadMessages: function(chatId) {
+    check(this.userId, String);
+    check(chatId, String);
+
+    const userId = this.userId;
+
+    const chat = ChatsCollection.findOne(
+      { _id: chatId },
+      { fields: { messagesCount: 1, readMessages: 1 } }
+    );
+
+    let { readMessages = [], messagesCount } = chat;
+
+    const findUser = readMessages.findIndex(item => item.userId === userId);
+
+    if (findUser >= 0) {
+      readMessages[findUser].count = messagesCount;
+    } else {
+      readMessages.push({
+        userId: userId,
+        count: messagesCount
+      });
+    }
+
+    return ChatsCollection.update({ _id: chatId }, { $set: { readMessages } });
   }
 });

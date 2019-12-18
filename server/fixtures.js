@@ -46,7 +46,7 @@ if (Meteor.users.find().count() === 0) {
 
   const contactId = contacts.map(contact => ContactsCollection.insert(contact))[0];
 
-  const chats = [...new Array(10)].map(chat => {
+  const chats = [...new Array(2)].map(chat => {
     return {
       type: "single",
       channelChatId: randomNumberInRange(),
@@ -71,5 +71,14 @@ if (Meteor.users.find().count() === 0) {
       firstName: contacts[0].name
     };
     const messageId = MessagesCollection.insert(message);
+
+    ChatsCollection.update(
+      { _id: chatId },
+      {
+        $inc: {
+          messagesCount: 1
+        }
+      }
+    );
   });
 }
