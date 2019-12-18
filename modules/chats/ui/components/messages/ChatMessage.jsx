@@ -4,7 +4,7 @@ import moment from "moment";
 import { Paper, ListItem, Grid, Typography, makeStyles } from "@material-ui/core";
 
 import PlainMessage from "./messageTypes/PlainMessage";
-import PhotoRenderer from "./messageTypes/PhotoRenderer";
+import ImageRenderer from "./messageTypes/ImageRenderer";
 import DocumentRenderer from "./messageTypes/DocumentRenderer";
 
 const useStyles = makeStyles(theme => ({
@@ -52,8 +52,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function getMessageRenderer(type) {
-  if (type === "photo") {
-    return PhotoRenderer;
+  if (type === "image") {
+    return ImageRenderer;
   } else if (type === "document") {
     return DocumentRenderer;
   }

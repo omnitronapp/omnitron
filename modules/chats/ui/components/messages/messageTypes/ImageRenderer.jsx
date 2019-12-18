@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function PhotoRenderer({ message }) {
+export default function ImageRenderer({ message }) {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -33,7 +33,7 @@ export default function PhotoRenderer({ message }) {
 
   return (
     <>
-      <img src={message.previewPhoto} className={classes.previewPhoto} onClick={handleOpen} />
+      <img src={message.image.previewImage} className={classes.previewPhoto} onClick={handleOpen} />
       <Modal
         className={classes.modal}
         aria-labelledby="simple-modal-title"
@@ -41,7 +41,7 @@ export default function PhotoRenderer({ message }) {
         open={open}
         onClose={handleClose}
       >
-        <img src={message.photo} />
+        <img src={message.image.image} />
       </Modal>
     </>
   );

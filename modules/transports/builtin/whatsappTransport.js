@@ -1,7 +1,8 @@
 import { EventEmitter } from "events";
+import Twilio from "twilio";
+import request from "request";
 
 import { Rest } from "../../rest/server";
-import Twilio from "twilio";
 export class Transport extends EventEmitter {
   constructor() {
     super();
@@ -51,6 +52,9 @@ export class Transport extends EventEmitter {
       res.send({});
     });
 
+    const imageTypes = ["image/jpeg", "image/gif", "image/png", "image/bmp"];
+    const applicationTypes = ["application/pdf"];
+
     Rest.post(
       "/webhook/whatsapp",
       Meteor.bindEnvironment((req, res) => {
@@ -75,21 +79,42 @@ export class Transport extends EventEmitter {
         };
 
         if (message.NumMedia) {
-          // process all media objects
           for (let i = 0; i < message.NumMedia; i++) {
             const mediaType = message[`MediaContentType${i}`];
-            if (mediaType === "image/jpeg") {
-              messageData.type = "photo";
-              messageData.photo = message[`MediaUrl${i}`];
-              messageData.previewPhoto = message[`MediaUrl${i}`];
+            if (imageTypes.includes(mediaType)) {
+              messageData.type = "image";
+              messageData.image = {
+                previewImage: message[`MediaUrl${i}`],
+                image: message[`MediaUrl${i}`]
+              };
+            } else if (applicationTypes.includes(mediaType)) {
+              messageData.type = "document";
+              messageData.document = {
+                link: message[`MediaUrl${i}`],
+                title: message.Body,
+                size: 1024 * 1024 // take random file size
+              };
             }
           }
         }
 
-        this.emit("message", {
-          parsedMessage: messageData,
-          rawMessage: message
-        });
+        if (messageData.document) {
+          request.head(messageData.document.link, (err, response) => {
+            const fileSize = response.headers["content-length"];
+
+            messageData.document.size = fileSize;
+
+            this.emit("message", {
+              parsedMessage: messageData,
+              rawMessage: message
+            });
+          });
+        } else {
+          this.emit("message", {
+            parsedMessage: messageData,
+            rawMessage: message
+          });
+        }
 
         res.type("text/xml");
         res.send(response.toString());

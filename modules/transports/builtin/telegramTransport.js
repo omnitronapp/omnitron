@@ -90,9 +90,11 @@ export class Transport extends EventEmitter {
               if (isPhoto) {
                 messageData = {
                   ...messageData,
-                  type: "photo",
-                  previewPhoto: links[0],
-                  photo: links[1]
+                  type: "image",
+                  image: {
+                    previewImage: links[0],
+                    image: links[1]
+                  }
                 };
               } else if (isDocument) {
                 messageData = {

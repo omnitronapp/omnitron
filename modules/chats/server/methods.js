@@ -224,7 +224,7 @@ Meteor.methods({
       { fields: { messagesCount: 1, readMessages: 1 } }
     );
 
-    let { readMessages = [], messagesCount } = chat;
+    let { readMessages = [], messagesCount = 0 } = chat;
 
     const findUser = readMessages.findIndex(item => item.userId === userId);
 
