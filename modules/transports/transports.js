@@ -9,6 +9,13 @@ export class Transports {
   registerTransport(transportInstance) {
     this.transports[transportInstance.name] = transportInstance;
 
+    transportInstance.on(
+      "message",
+      Meteor.bindEnvironment(message => {
+        Meteor.call("receiveMessage", message);
+      })
+    );
+
     const transportEntry = TransportsCollection.findOne({ name: transportInstance.name });
 
     if (transportEntry) {
@@ -45,13 +52,6 @@ export class Transports {
       if (transportEntry.enabled) {
         transport.configure(transportEntry);
         transport.configureHandlers(transportEntry);
-
-        transport.on(
-          "message",
-          Meteor.bindEnvironment(message => {
-            Meteor.call("receiveMessage", message);
-          })
-        );
       } else {
         console.log(`Transport ${name} is disabled`);
       }

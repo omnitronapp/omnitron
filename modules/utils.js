@@ -1,6 +1,4 @@
-export function trimMessage(message, options = {}) {
-  const { maxLength = 13, length = 10 } = options;
-
+export function trimMessage(message, maxLength = 13, length = 10) {
   if (!message) {
     return "";
   }

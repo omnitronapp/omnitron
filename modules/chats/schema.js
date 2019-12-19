@@ -89,6 +89,11 @@ const VoiceSchema = new SimpleSchema({
   type: String
 });
 
+const ImageSchema = new SimpleSchema({
+  previewImage: String,
+  image: String
+});
+
 export const MessageSchema = new SimpleSchema({
   chatId: {
     type: String
@@ -149,12 +154,8 @@ export const MessageSchema = new SimpleSchema({
     defaultValue: false,
     optional: true
   },
-  previewPhoto: {
-    type: String,
-    optional: true
-  },
-  photo: {
-    type: String,
+  image: {
+    type: ImageSchema,
     optional: true
   },
   document: {

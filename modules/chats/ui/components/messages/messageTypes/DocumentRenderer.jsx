@@ -37,7 +37,7 @@ export default function DocumentRenderer({ message }) {
           </Avatar>
         </ListItemAvatar>
         <ListItemText
-          primary={trimMessage(document.title, { maxLength: 27, length: 24 })}
+          primary={trimMessage(document.title, 27, 24)}
           secondary={
             <React.Fragment>
               <Typography className={classes.socondary} component="span" color="textSecondary">

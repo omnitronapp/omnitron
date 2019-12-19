@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function differMessages(readMessages, messagesCount) {
-  const userReadMessages = readMessages.find(item => item.userId === Meteor.userId());
+  const userReadMessages = (readMessages || []).find(item => item.userId === Meteor.userId());
 
   const differ = messagesCount - ((userReadMessages || {}).count || 0);
 
