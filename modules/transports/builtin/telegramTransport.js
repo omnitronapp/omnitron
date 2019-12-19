@@ -179,6 +179,7 @@ export class Transport extends EventEmitter {
           });
       });
 
+      this.bot.telegram.setWebhook(url.resolve(process.env.ROOT_URL, "/webhook/telegram"));
       this.configureWebhook();
     });
   }
@@ -189,7 +190,6 @@ export class Transport extends EventEmitter {
     }
     this.webhookDefined = true;
 
-    this.bot.telegram.setWebhook(url.resolve(process.env.ROOT_URL, "/webhook/telegram"));
     Rest.post(`/webhook/telegram`, (req, res) => {
       this.bot
         .handleUpdate(req.body, res)
