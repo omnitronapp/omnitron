@@ -12,6 +12,8 @@ export class Transport extends EventEmitter {
     this.name = "telegram";
     this.channel = "telegram";
     this.title = "Telegram";
+
+    this.webhookDefined = false;
   }
 
   requireCredentials() {
@@ -35,20 +37,11 @@ export class Transport extends EventEmitter {
     }
 
     this.bot = new Telegraf(credentials.token);
-
     this.credentials = credentials;
   }
 
   configureHandlers() {
     this.bot.telegram.deleteWebhook().then(() => {
-      this.bot.telegram.setWebhook(url.resolve(process.env.ROOT_URL, "/webhook/telegram"));
-      Rest.use(this.bot.webhookCallback("/webhook/telegram"));
-
-      // Rest.post(`/webhook/telegram`, (req, res) => {
-      //   console.log(req.body);
-      //   this.bot.handleUpdate(req.body, res);
-      // });
-
       this.bot.on(["photo", "document"], ctx => {
         try {
           const { message } = ctx;
@@ -185,6 +178,31 @@ export class Transport extends EventEmitter {
             console.error("couldn't retrieve voice message", err.message);
           });
       });
+    });
+
+    this.configureWebhook();
+  }
+
+  configureWebhook() {
+    if (this.webhookDefined) {
+      return;
+    }
+    this.webhookDefined = true;
+
+    this.bot.telegram.setWebhook(url.resolve(process.env.ROOT_URL, "/webhook/telegram"));
+    Rest.post(`/webhook/telegram`, (req, res) => {
+      this.bot
+        .handleUpdate(req.body, res)
+        .then(() => {
+          if (!res.finished) {
+            res.end();
+          }
+        })
+        .catch(err => {
+          console.error("TG webhook error", err);
+          res.writeHead(500);
+          res.end();
+        });
     });
   }
 
