@@ -178,9 +178,9 @@ export class Transport extends EventEmitter {
             console.error("couldn't retrieve voice message", err.message);
           });
       });
-    });
 
-    this.configureWebhook();
+      this.configureWebhook();
+    });
   }
 
   configureWebhook() {
