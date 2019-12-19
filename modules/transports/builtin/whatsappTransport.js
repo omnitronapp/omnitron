@@ -54,6 +54,7 @@ export class Transport extends EventEmitter {
 
     const imageTypes = ["image/jpeg", "image/gif", "image/png", "image/bmp"];
     const applicationTypes = ["application/pdf"];
+    const audioTypes = ["audio/ogg"];
 
     Rest.post(
       "/webhook/whatsapp",
@@ -94,6 +95,14 @@ export class Transport extends EventEmitter {
                 title: message.Body,
                 size: 1024 * 1024 // take random file size
               };
+            } else if (audioTypes.includes(mediaType)) {
+              messageData.type = "voice";
+              messageData.voice = {
+                link: message[`MediaUrl${i}`],
+                duration: 0,
+                type: mediaType,
+                size: 0
+              };
             }
           }
         }
@@ -103,6 +112,16 @@ export class Transport extends EventEmitter {
             const fileSize = response.headers["content-length"];
 
             messageData.document.size = fileSize;
+
+            this.emit("message", {
+              parsedMessage: messageData,
+              rawMessage: message
+            });
+          });
+        } else if (messageData.voice) {
+          request.head(messageData.voice.link, (err, response) => {
+            const fileSize = response.headers["content-length"];
+            messageData.voice.size = fileSize;
 
             this.emit("message", {
               parsedMessage: messageData,
