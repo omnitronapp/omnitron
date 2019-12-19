@@ -82,6 +82,13 @@ const DocumentSchema = new SimpleSchema({
   size: Number
 });
 
+const VoiceSchema = new SimpleSchema({
+  link: String,
+  duration: Number,
+  size: Number,
+  type: String
+});
+
 export const MessageSchema = new SimpleSchema({
   chatId: {
     type: String
@@ -97,7 +104,7 @@ export const MessageSchema = new SimpleSchema({
     type: String,
     optional: true,
     defaultValue: "plain",
-    allowedValues: ["plain", "photo", "document"]
+    allowedValues: ["plain", "photo", "document", "voice"]
   },
   message: {
     type: String,
@@ -152,6 +159,10 @@ export const MessageSchema = new SimpleSchema({
   },
   document: {
     type: DocumentSchema,
+    optional: true
+  },
+  voice: {
+    type: VoiceSchema,
     optional: true
   }
 });

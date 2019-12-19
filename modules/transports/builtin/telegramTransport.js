@@ -136,6 +136,46 @@ export class Transport extends EventEmitter {
         rawMessage: message
       });
     });
+
+    this.bot.on("voice", ctx => {
+      const { message } = ctx;
+      const { voice } = message;
+
+      const { duration, mime_type: type, file_size: size, file_id: voiceId } = voice;
+
+      this.bot.telegram
+        .getFileLink(voiceId)
+        .then(link => {
+          const date = Date.now();
+
+          const messageData = {
+            messageId: message.message_id,
+            userId: message.from.id,
+            username: message.from.username,
+            firstName: message.from.first_name,
+            chatName: message.chat.type === "private" ? message.chat.username : message.chat.title,
+            channelChatId: message.chat.id,
+            date: date,
+            text: message.text,
+            type: "voice",
+            channel: "telegram",
+            voice: {
+              link,
+              duration,
+              type,
+              size
+            }
+          };
+
+          this.emit("message", {
+            parsedMessage: messageData,
+            rawMessage: message
+          });
+        })
+        .catch(err => {
+          console.error("couldn't retrieve voice message", err.message);
+        });
+    });
   }
 
   sendMessage(chatId, message) {

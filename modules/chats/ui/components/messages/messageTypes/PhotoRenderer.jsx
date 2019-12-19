@@ -14,7 +14,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 4, 3)
   },
   previewPhoto: {
-    width: "100%"
+    width: "100%",
+    maxWidth: "100px"
   }
 }));
 

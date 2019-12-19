@@ -6,6 +6,7 @@ import { Paper, ListItem, Grid, Typography, makeStyles } from "@material-ui/core
 import PlainMessage from "./messageTypes/PlainMessage";
 import PhotoRenderer from "./messageTypes/PhotoRenderer";
 import DocumentRenderer from "./messageTypes/DocumentRenderer";
+import AudioPlayer from "./messageTypes/AudioPlayer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -14,12 +15,12 @@ const useStyles = makeStyles(theme => ({
     width: "100%"
   },
   cardInbound: {
-    maxWidth: theme.spacing(45),
+    maxWidth: theme.spacing(50),
     position: "relative",
     backgroundColor: "#e3f2fd"
   },
   cardOutbound: {
-    maxWidth: theme.spacing(45),
+    maxWidth: theme.spacing(50),
     position: "relative",
     backgroundColor: "#e3f2fd"
   },
@@ -56,6 +57,8 @@ function getMessageRenderer(type) {
     return PhotoRenderer;
   } else if (type === "document") {
     return DocumentRenderer;
+  } else if (type === "voice") {
+    return AudioPlayer;
   }
 
   return PlainMessage;
