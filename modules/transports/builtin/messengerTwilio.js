@@ -1,0 +1,168 @@
+import { EventEmitter } from "events";
+import Twilio from "twilio";
+import request from "request";
+
+import { Rest } from "../../rest/server";
+
+export class Transport extends EventEmitter {
+  constructor() {
+    super();
+
+    this.name = "messenger";
+    this.channel = "messenger";
+    this.title = "Facebook (Twilio)";
+    this.handlersCreated = false;
+  }
+
+  requireCredentials() {
+    return [
+      {
+        key: "from",
+        title: "From page id (with 'messenger:' prefix)"
+      },
+      {
+        key: "accountSid",
+        title: "Account SID",
+        type: "password"
+      },
+      {
+        key: "authToken",
+        title: "Auth Token",
+        type: "password"
+      }
+    ];
+  }
+
+  configure({ credentials }) {
+    if (!credentials.accountSid || !credentials.authToken) {
+      throw new Error(`${this.name} transport credentails not provided`);
+    }
+
+    this.client = new Twilio(credentials.accountSid, credentials.authToken);
+    this.credentials = credentials;
+  }
+
+  configureHandlers() {
+    if (this.handlersCreated) {
+      return;
+    }
+    this.handlersCreated = true;
+
+    Rest.post("/webhook/messenger/status", (req, res) => {
+      // TODO: Handle status message
+      res.send({});
+    });
+
+    const imageTypes = ["image/jpeg", "image/gif", "image/png", "image/bmp"];
+    const applicationTypes = ["application/pdf"];
+    const audioTypes = ["audio/ogg"];
+
+    Rest.post(
+      "/webhook/messenger",
+      Meteor.bindEnvironment((req, res) => {
+        const message = req.body;
+
+        const response = new Twilio.twiml.MessagingResponse();
+
+        const date = Date.now();
+
+        const username = message.From.replace("messenger:", "");
+        const messageData = {
+          messageId: message.SmsMessageSid,
+          userId: message.AccountSid,
+          username: username,
+          firstName: username,
+          channelChatId: message.From,
+          chatName: username,
+          date: date,
+          text: message.Body,
+          type: "plain",
+          channel: "messenger"
+        };
+
+        if (message.NumMedia) {
+          for (let i = 0; i < message.NumMedia; i++) {
+            const mediaType = message[`MediaContentType${i}`];
+            if (imageTypes.includes(mediaType)) {
+              messageData.type = "image";
+              messageData.image = {
+                previewImage: message[`MediaUrl${i}`],
+                image: message[`MediaUrl${i}`]
+              };
+            } else if (applicationTypes.includes(mediaType)) {
+              messageData.type = "document";
+              messageData.document = {
+                link: message[`MediaUrl${i}`],
+                title: message.Body,
+                size: 1024 * 1024 // take random file size
+              };
+            } else if (audioTypes.includes(mediaType)) {
+              messageData.type = "voice";
+              messageData.voice = {
+                link: message[`MediaUrl${i}`],
+                duration: 0,
+                type: mediaType,
+                size: 0
+              };
+            }
+          }
+        }
+
+        if (messageData.document) {
+          request.head(messageData.document.link, (err, response) => {
+            const fileSize = response.headers["content-length"];
+
+            messageData.document.size = fileSize;
+
+            this.emit("message", {
+              parsedMessage: messageData,
+              rawMessage: message
+            });
+          });
+        } else if (messageData.voice) {
+          request.head(messageData.voice.link, (err, response) => {
+            const fileSize = response.headers["content-length"];
+            messageData.voice.size = fileSize;
+
+            this.emit("message", {
+              parsedMessage: messageData,
+              rawMessage: message
+            });
+          });
+        } else {
+          this.emit("message", {
+            parsedMessage: messageData,
+            rawMessage: message
+          });
+        }
+
+        res.type("text/xml");
+        res.send(response.toString());
+      })
+    );
+  }
+
+  sendMessage(chatId, message) {
+    return new Promise((resolve, reject) => {
+      if (this.client) {
+        this.client.messages
+          .create({
+            body: message,
+            from: this.credentials.from,
+            to: chatId
+          })
+          .then(
+            message => console.log(message.sid),
+            err => {
+              console.error(err);
+            }
+          )
+          .done(resolve);
+      }
+    });
+  }
+
+  stop() {
+    this.client = null;
+  }
+}

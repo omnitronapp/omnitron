@@ -16,7 +16,9 @@ export class Transports {
       })
     );
 
-    const transportEntry = TransportsCollection.findOne({ name: transportInstance.name });
+    const transportEntry = TransportsCollection.findOne({
+      name: transportInstance.name
+    });
 
     if (transportEntry) {
       // if required credentials was changed
@@ -41,6 +43,7 @@ export class Transports {
     }
   }
 
+  // TODO: Complete
   areCredentialsSatisfied() {}
 
   configureTransport(name) {

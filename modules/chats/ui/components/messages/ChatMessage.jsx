@@ -6,7 +6,7 @@ import { Paper, ListItem, Grid, Typography, makeStyles } from "@material-ui/core
 import PlainMessage from "./messageTypes/PlainMessage";
 import ImageRenderer from "./messageTypes/ImageRenderer";
 import DocumentRenderer from "./messageTypes/DocumentRenderer";
-import AudioPlayer from "./messageTypes/AudioPlayer";
+import AudioRenderer from "./messageTypes/AudioRenderer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,7 +58,7 @@ function getMessageRenderer(type) {
   } else if (type === "document") {
     return DocumentRenderer;
   } else if (type === "voice") {
-    return AudioPlayer;
+    return AudioRenderer;
   }
 
   return PlainMessage;

@@ -109,7 +109,7 @@ export const MessageSchema = new SimpleSchema({
     type: String,
     optional: true,
     defaultValue: "plain",
-    allowedValues: ["plain", "photo", "document", "voice"]
+    allowedValues: ["plain", "image", "document", "voice"]
   },
   message: {
     type: String,

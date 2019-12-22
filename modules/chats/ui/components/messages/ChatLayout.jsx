@@ -43,7 +43,12 @@ export default function ChatLayout({ chatId }) {
         </Typography>
       );
     } else {
-      return [<ChatWindow key="chat" chatId={chatId} />, <ChatInput key="input" chatId={chatId} />];
+      return (
+        <>
+          <ChatWindow key="chat" chatId={chatId} />
+          <ChatInput key="input" chatId={chatId} />
+        </>
+      );
     }
   }
 

@@ -10,7 +10,7 @@ import {
   Chip,
   makeStyles
 } from "@material-ui/core";
-import { WhatsApp, Telegram } from "@material-ui/icons";
+import { WhatsApp, Telegram, Facebook } from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
   chip: {
@@ -31,6 +31,8 @@ function getChannelIcon(channel) {
     return WhatsApp;
   } else if (channel === "telegram") {
     return Telegram;
+  } else if (channel === "messenger") {
+    return Facebook;
   }
 
   return null;
