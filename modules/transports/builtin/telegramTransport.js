@@ -179,6 +179,36 @@ export class Transport extends EventEmitter {
           });
       });
 
+      this.bot.on("video", ctx => {
+        const { message } = ctx;
+
+        this.bot.telegram.getFileLink(message.video.file_id).then(link => {
+          const messageData = {
+            messageId: message.message_id,
+            userId: message.from.id,
+            username: message.from.username,
+            firstName: message.from.first_name,
+            chatName: message.chat.type === "private" ? message.chat.username : message.chat.title,
+            channelChatId: message.chat.id,
+            date: new Date(),
+            text: message.text,
+            type: "video",
+            channel: "telegram",
+            video: {
+              link,
+              size: message.video.file_size,
+              type: message.video.mime_type,
+              duration: message.video.duration
+            }
+          };
+
+          this.emit("message", {
+            parsedMessage: messageData,
+            rawMessage: message
+          });
+        });
+      });
+
       this.bot.telegram.setWebhook(url.resolve(process.env.ROOT_URL, "/webhook/telegram"));
       this.configureWebhook();
     });

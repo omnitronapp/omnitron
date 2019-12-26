@@ -54,8 +54,38 @@ export class Transport extends EventEmitter {
 
     const imageTypes = ["image/jpeg", "image/gif", "image/png", "image/bmp"];
     const applicationTypes = ["application/pdf"];
-    const audioTypes = ["audio/ogg"];
+    const audioTypes = [
+      "audio/basic",
+      "audio/L24",
+      "audio/mp4",
+      "audio/mpeg",
+      "audio/ogg",
+      "audio/vorbis",
+      "audio/vnd.rn-realaudio",
+      "audio/vnd.wave",
+      "audio/3gpp",
+      "audio/3gpp2",
+      "audio/ac3",
+      "audio/vnd.wave",
+      "audio/webm",
+      "audio/amr-nb",
+      "audio/amr"
+    ];
 
+    const videoTypes = [
+      "video/mpeg",
+      "video/mp4",
+      "video/quicktime",
+      "video/webm",
+      "video/3gpp",
+      "video/3gpp2",
+      "video/3gpp-tt",
+      "video/H261",
+      "video/H263",
+      "video/H263-1998",
+      "video/H263-2000",
+      "video/H264"
+    ];
     Rest.post(
       "/webhook/whatsapp",
       Meteor.bindEnvironment((req, res) => {
@@ -98,6 +128,14 @@ export class Transport extends EventEmitter {
             } else if (audioTypes.includes(mediaType)) {
               messageData.type = "voice";
               messageData.voice = {
+                link: message[`MediaUrl${i}`],
+                duration: 0,
+                type: mediaType,
+                size: 0
+              };
+            } else if (videoTypes.includes(mediaType)) {
+              messageData.type = "video";
+              messageData.video = {
                 link: message[`MediaUrl${i}`],
                 duration: 0,
                 type: mediaType,

@@ -94,6 +94,13 @@ const ImageSchema = new SimpleSchema({
   image: String
 });
 
+const VideoSchema = new SimpleSchema({
+  size: Number,
+  type: String,
+  duration: Number,
+  link: String
+});
+
 export const MessageSchema = new SimpleSchema({
   chatId: {
     type: String
@@ -109,7 +116,7 @@ export const MessageSchema = new SimpleSchema({
     type: String,
     optional: true,
     defaultValue: "plain",
-    allowedValues: ["plain", "image", "document", "voice"]
+    allowedValues: ["plain", "image", "document", "voice", "video"]
   },
   message: {
     type: String,
@@ -164,6 +171,10 @@ export const MessageSchema = new SimpleSchema({
   },
   voice: {
     type: VoiceSchema,
+    optional: true
+  },
+  video: {
+    type: VideoSchema,
     optional: true
   }
 });

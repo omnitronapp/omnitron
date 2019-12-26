@@ -7,6 +7,7 @@ import PlainMessage from "./messageTypes/PlainMessage";
 import ImageRenderer from "./messageTypes/ImageRenderer";
 import DocumentRenderer from "./messageTypes/DocumentRenderer";
 import AudioRenderer from "./messageTypes/AudioRenderer";
+import VideoRenderer from "./messageTypes/VideoRenderer";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,6 +60,8 @@ function getMessageRenderer(type) {
     return DocumentRenderer;
   } else if (type === "voice") {
     return AudioRenderer;
+  } else if (type === "video") {
+    return VideoRenderer;
   }
 
   return PlainMessage;
