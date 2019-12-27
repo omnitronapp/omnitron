@@ -12,6 +12,7 @@ export class Transport extends EventEmitter {
     this.name = "telegram";
     this.channel = "telegram";
     this.title = "Telegram";
+    this.linkToInstructions = "https://core.telegram.org/bots";
 
     this.webhookDefined = false;
   }
@@ -22,6 +23,17 @@ export class Transport extends EventEmitter {
         key: "token",
         title: "Bot Token",
         type: "password"
+      }
+    ];
+  }
+
+  webhookEndpoints() {
+    return [
+      {
+        key: "webhook_url",
+        title: "Webhook URL",
+        url: `/webhook/telegram`,
+        method: "POST"
       }
     ];
   }
@@ -209,7 +221,9 @@ export class Transport extends EventEmitter {
         });
       });
 
-      this.bot.telegram.setWebhook(url.resolve(process.env.ROOT_URL, "/webhook/telegram"));
+      const mainWebhook = this.webhookEndpoints().find(webhook => webhook.key === "webhook_url");
+
+      this.bot.telegram.setWebhook(url.resolve(process.env.ROOT_URL, mainWebhook.url));
       this.configureWebhook();
     });
   }
@@ -220,7 +234,9 @@ export class Transport extends EventEmitter {
     }
     this.webhookDefined = true;
 
-    Rest.post(`/webhook/telegram`, (req, res) => {
+    const mainWebhook = this.webhookEndpoints().find(webhook => webhook.key === "webhook_url");
+
+    Rest.post(mainWebhook.url, (req, res) => {
       this.bot
         .handleUpdate(req.body, res)
         .then(() => {

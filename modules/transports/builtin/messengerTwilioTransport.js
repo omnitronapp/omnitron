@@ -11,6 +11,8 @@ export class Transport extends EventEmitter {
     this.name = "messenger";
     this.channel = "messenger";
     this.title = "Facebook (Twilio)";
+    this.linkToInstructions = "https://www.twilio.com/docs/sms/channels";
+
     this.handlersCreated = false;
   }
 
@@ -33,6 +35,23 @@ export class Transport extends EventEmitter {
     ];
   }
 
+  webhookEndpoints() {
+    return [
+      {
+        key: "webhook_url",
+        title: "Webhook URL",
+        url: `/webhook/messenger`,
+        method: "POST"
+      },
+      {
+        key: "webhook_status_url",
+        title: "Webhook status URL",
+        url: `/webhook/messenger/status`,
+        method: "POST"
+      }
+    ];
+  }
+
   configure({ credentials }) {
     if (!credentials.accountSid || !credentials.authToken) {
       throw new Error(`${this.name} transport credentails not provided`);
@@ -48,7 +67,13 @@ export class Transport extends EventEmitter {
     }
     this.handlersCreated = true;
 
-    Rest.post("/webhook/messenger/status", (req, res) => {
+    const statusWebhook = this.webhookEndpoints().find(
+      webhook => webhook.key === "webhook_status_url"
+    );
+
+    const mainWebhook = this.webhookEndpoints().find(webhook => webhook.key === "webhook_url");
+
+    Rest.post(statusWebhook.url, (req, res) => {
       // TODO: Handle status message
       res.send({});
     });
@@ -89,7 +114,7 @@ export class Transport extends EventEmitter {
     ];
 
     Rest.post(
-      "/webhook/messenger",
+      mainWebhook.url,
       Meteor.bindEnvironment((req, res) => {
         const message = req.body;
 

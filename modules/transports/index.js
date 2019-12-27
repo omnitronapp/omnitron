@@ -4,7 +4,7 @@ import { Transports as TransportsClass } from "./transports";
 
 import { Transport as TelegramTransport } from "./builtin/telegramTransport";
 import { Transport as WhatsappTransport } from "./builtin/whatsappTransport";
-import { Transport as MessengerTwilio } from "./builtin/messengerTwilio";
+import { Transport as MessengerTwilio } from "./builtin/messengerTwilioTransport";
 
 export const Transports = new TransportsClass();
 

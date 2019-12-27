@@ -26,7 +26,9 @@ export class Transports {
         { _id: transportEntry._id },
         {
           $set: {
-            requiredCredentials: transportInstance.requireCredentials()
+            requiredCredentials: transportInstance.requireCredentials(),
+            webhookEndpoints: transportInstance.webhookEndpoints(),
+            linkToInstructions: transportInstance.linkToInstructions
           }
         }
       );
@@ -36,6 +38,8 @@ export class Transports {
         channel: transportInstance.channel,
         enabled: false,
         requiredCredentials: transportInstance.requireCredentials(),
+        webhookEndpoints: transportInstance.webhookEndpoints(),
+        linkToInstructions: transportInstance.linkToInstructions,
         credentials: {}
       };
 

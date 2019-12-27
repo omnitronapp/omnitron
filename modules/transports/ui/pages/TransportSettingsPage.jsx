@@ -16,6 +16,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import { TransportsCollection } from "../../collections";
 import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
+import TransportWebhooksInformation from "./TransportWebhooksInformation";
 
 function a11yProps(index) {
   return {
@@ -61,11 +62,19 @@ function TransportTabPanel(props) {
           credentials={transport.credentials}
           onChange={onCredentialChange}
         />
+        <TransportWebhooksInformation webhooks={transport.webhookEndpoints} />
         <FormControlLabel
           control={<Checkbox checked={transport.enabled} value={"Enabled"} />}
           label="Enabled"
           onChange={onTransportStatusChange}
         />
+
+        <p>
+          To properly configure {transport.channel} channel go to:{" "}
+          <a href={transport.linkToInstructions} target="_blank">
+            {transport.channel} instructions
+          </a>
+        </p>
       </Container>
     </Typography>
   );

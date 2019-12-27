@@ -10,6 +10,8 @@ export class Transport extends EventEmitter {
     this.name = "whatsapp";
     this.channel = "whatsapp";
     this.title = "Whatsapp (Twilio)";
+    this.linkToInstructions = "https://www.twilio.com/docs/sms/whatsapp";
+
     this.handlersCreated = false;
   }
 
@@ -32,6 +34,23 @@ export class Transport extends EventEmitter {
     ];
   }
 
+  webhookEndpoints() {
+    return [
+      {
+        key: "webhook_url",
+        title: "Webhook URL",
+        url: `/webhook/whatsapp`,
+        method: "POST"
+      },
+      {
+        key: "webhook_status_url",
+        title: "Webhook Status URL",
+        url: `/webhook/whatsapp/status`,
+        method: "POST"
+      }
+    ];
+  }
+
   configure({ credentials }) {
     if (!credentials.accountSid || !credentials.authToken) {
       throw new Error(`${this.name} transport credentails not provided`);
@@ -47,7 +66,13 @@ export class Transport extends EventEmitter {
     }
     this.handlersCreated = true;
 
-    Rest.post("/webhook/whatsapp/status", (req, res) => {
+    const statusWebhook = this.webhookEndpoints().find(
+      webhook => webhook.key === "webhook_status_url"
+    );
+
+    const mainWebhook = this.webhookEndpoints().find(webhook => webhook.key === "webhook_url");
+
+    Rest.post(statusWebhook.url, (req, res) => {
       // TODO: Handle status message
       res.send({});
     });
@@ -87,7 +112,7 @@ export class Transport extends EventEmitter {
       "video/H264"
     ];
     Rest.post(
-      "/webhook/whatsapp",
+      mainWebhook.url,
       Meteor.bindEnvironment((req, res) => {
         const message = req.body;
 
