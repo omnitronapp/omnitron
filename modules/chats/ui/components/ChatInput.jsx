@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 
-import React, { useState, Fragment } from "react";
+import React, { useState } from "react";
 
 import { Grid, TextField, IconButton, makeStyles } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
@@ -32,6 +32,12 @@ export default function ChatInput({ chatId }) {
     );
   }
 
+  function onKeyDown(event) {
+    if (event.ctrlKey && event.keyCode === 13) {
+      sendMessage();
+    }
+  }
+
   function onInputChange(event) {
     setText(event.target.value);
   }
@@ -49,12 +55,11 @@ export default function ChatInput({ chatId }) {
         InputProps={{ disableUnderline: true }}
         className={classes.input}
         onChange={onInputChange}
+        onKeyDown={onKeyDown}
       />
-      <Fragment>
-        <IconButton onClick={sendMessage} disabled={text.trim().length === 0} color="primary">
-          <Send />
-        </IconButton>
-      </Fragment>
+      <IconButton onClick={sendMessage} disabled={text.trim().length === 0} color="primary">
+        <Send />
+      </IconButton>
     </Grid>
   );
 }
