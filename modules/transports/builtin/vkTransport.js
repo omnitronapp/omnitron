@@ -1,4 +1,7 @@
 import { EventEmitter } from "events";
+import url from "url";
+import querystring from "querystring";
+import request from "request";
 
 import { Rest } from "../../rest/server/";
 
@@ -22,17 +25,30 @@ export class Transport extends EventEmitter {
       },
       {
         key: "verify_token",
-        title: "Verify Token"
+        title: "Verify Token",
+        type: "password"
       },
       {
         key: "secret_key",
-        title: "Secret Key"
+        title: "Secret Key",
+        type: "password"
+      },
+      {
+        key: "access_token",
+        title: "Access Token",
+        type: "password"
       }
     ];
   }
 
   webhookEndpoints() {
     return [
+      {
+        key: "api_version",
+        title: "API Version",
+        url: `v5.50`,
+        method: "Use this API version"
+      },
       {
         key: "webhook_url",
         title: "Webhook URL",
@@ -56,9 +72,7 @@ export class Transport extends EventEmitter {
     }
     this.handlersCreated = true;
 
-    const mainWebhook = this.webhookEndpoints().find(
-      webhook => webhook.key === "webhook_url"
-    );
+    const mainWebhook = this.webhookEndpoints().find(webhook => webhook.key === "webhook_url");
 
     Rest.post(
       mainWebhook.url,
@@ -145,7 +159,29 @@ export class Transport extends EventEmitter {
   }
 
   sendMessage(chatId, message) {
-    return new Promise((resolve, reject) => {});
+    return new Promise((resolve, reject) => {
+      const methodUrl = "https://api.vk.com/method/messages.send";
+
+      const params = {
+        access_token: this.credentials.access_token,
+        v: "5.50",
+        peer_id: chatId,
+        message: message
+      };
+
+      const requestParams = querystring.stringify(params);
+
+      console.log(methodUrl + "?" + requestParams);
+      request.get(methodUrl + "?" + requestParams, (err, res, body) => {
+        console.log(err, body);
+        if (err) {
+          console.log(err, body);
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
   }
 
   stop() {
