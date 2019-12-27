@@ -8,25 +8,11 @@ Meteor.methods({
     check(_id, String);
     check(enabled, Boolean);
 
-    const transportEntry = TransportsCollection.findOne(_id);
-
-    if (enabled) {
-      TransportsCollection.update(_id, {
-        $set: {
-          enabled: true
-        }
-      });
-
-      Transports.configureTransport(transportEntry.name);
-    } else {
-      TransportsCollection.update(_id, {
-        $set: {
-          enabled: false
-        }
-      });
-
-      Transports.stop(transportEntry.name);
-    }
+    TransportsCollection.update(_id, {
+      $set: {
+        enabled
+      }
+    });
   },
   updateTransportCredential(_id, key, value) {
     check(_id, String);
