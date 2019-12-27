@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import _ from "underscore";
 
@@ -19,18 +19,55 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ChatWindow({ groupedMessages, chat, chatId }) {
+function ChatWindow({ groupedMessages, ready, chat, chatId }) {
+  if (!ready) {
+    return null;
+  }
+
   const classes = useStyles();
+
+  const chatPaperRef = useRef(null);
+
+  const [scrollToBottom, setScrollToBottom] = useState(true);
+
+  function scrollPaper() {
+    if (chatPaperRef && chatPaperRef.current) {
+      if (scrollToBottom) {
+        chatPaperRef.current.scrollTop =
+          chatPaperRef.current.scrollHeight - chatPaperRef.current.clientHeight;
+      }
+    }
+  }
 
   useEffect(
     () => {
       Meteor.call("setReadMessages", chatId);
+      scrollPaper();
     },
     [chat.messagesCount]
   );
 
+  // scroll to the bottom when chat opened
+  useEffect(
+    () => {
+      scrollPaper();
+    },
+    [chatId]
+  );
+
+  function onScroll(event) {
+    const { target } = event;
+
+    const userScrollToBottom =
+      Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) <= 3.0;
+
+    if (scrollToBottom !== userScrollToBottom) {
+      setScrollToBottom(userScrollToBottom);
+    }
+  }
+
   return (
-    <Paper square elevation={0} className={classes.root}>
+    <Paper square elevation={0} className={classes.root} onScroll={onScroll} ref={chatPaperRef}>
       {groupedMessages.map(messages => {
         const createdAt = messages[0].createdAt;
         const date = moment(createdAt).format("dddd, MMM DD, YYYY");
