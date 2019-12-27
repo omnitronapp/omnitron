@@ -10,7 +10,8 @@ import {
   Chip,
   makeStyles
 } from "@material-ui/core";
-import { WhatsApp, Telegram, Facebook } from "@material-ui/icons";
+
+import ChannelIcon from "./ChannelIcon";
 
 const useStyles = makeStyles(theme => ({
   chip: {
@@ -19,25 +20,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function differMessages(readMessages, messagesCount) {
-  const userReadMessages = (readMessages || []).find(
-    item => item.userId === Meteor.userId()
-  );
+  const userReadMessages = (readMessages || []).find(item => item.userId === Meteor.userId());
 
   const differ = messagesCount - ((userReadMessages || {}).count || 0);
 
   return differ || 0;
-}
-
-function getChannelIcon(channel) {
-  if (channel === "whatsapp") {
-    return WhatsApp;
-  } else if (channel === "telegram") {
-    return Telegram;
-  } else if (channel === "messenger") {
-    return Facebook;
-  }
-
-  return null;
 }
 
 function showUnreadMessages(differ, classes) {
@@ -68,8 +55,6 @@ export default function ChatItem({
     if (differ > 0) Meteor.call("setReadMessages", _id);
   }
 
-  const ChannelIcon = getChannelIcon(channel);
-
   return (
     <ListItem button selected={selected} onClick={onClick}>
       <ListItemAvatar>
@@ -79,7 +64,7 @@ export default function ChatItem({
       </ListItemAvatar>
       <ListItemText primary={name} secondary={lastMessageTrimmed} />
       <ListItemSecondaryAction>
-        {ChannelIcon ? <ChannelIcon /> : null}
+        <ChannelIcon channel={channel} />
         {showUnreadMessages(differ, classes)}
       </ListItemSecondaryAction>
     </ListItem>

@@ -12,7 +12,7 @@ export class Transport extends EventEmitter {
     this.name = "vk";
     this.channel = "vk";
     this.title = "VK";
-    this.linkToInstructions = "https://vk.link";
+    this.linkToInstructions = "https://vk.com/dev/bots_docs";
 
     this.webhookDefined = false;
   }
@@ -66,6 +66,18 @@ export class Transport extends EventEmitter {
     this.credentials = credentials;
   }
 
+  makeRequest(method, params, callback) {
+    const baseUrl = "https://api.vk.com/method/";
+
+    const requestParams = querystring.stringify({
+      ...params,
+      access_token: this.credentials.access_token,
+      v: "5.50"
+    });
+
+    request(baseUrl + method + "?" + requestParams, callback);
+  }
+
   configureHandlers() {
     if (this.handlersCreated) {
       return;
@@ -78,8 +90,6 @@ export class Transport extends EventEmitter {
       mainWebhook.url,
       Meteor.bindEnvironment((req, res) => {
         const message = req.body;
-
-        console.log(message, this.credentials);
 
         if (
           message.type === "confirmation" &&
@@ -148,10 +158,29 @@ export class Transport extends EventEmitter {
             }
           }
 
-          this.emit("message", {
-            parsedMessage: messageData,
-            rawMessage: message
-          });
+          this.makeRequest(
+            "users.get",
+            {
+              user_ids: message.object.user_id
+            },
+            (err, req, body) => {
+              try {
+                const { response } = JSON.parse(body);
+
+                if (response) {
+                  messageData.firstName = response[0].first_name;
+                  messageData.chatName = response[0].first_name + " " + response[0].last_name;
+                }
+              } catch (e) {
+                console.error(e);
+              } finally {
+                this.emit("message", {
+                  parsedMessage: messageData,
+                  rawMessage: message
+                });
+              }
+            }
+          );
         }
         res.send("ok");
       })
@@ -160,22 +189,8 @@ export class Transport extends EventEmitter {
 
   sendMessage(chatId, message) {
     return new Promise((resolve, reject) => {
-      const methodUrl = "https://api.vk.com/method/messages.send";
-
-      const params = {
-        access_token: this.credentials.access_token,
-        v: "5.50",
-        peer_id: chatId,
-        message: message
-      };
-
-      const requestParams = querystring.stringify(params);
-
-      console.log(methodUrl + "?" + requestParams);
-      request.get(methodUrl + "?" + requestParams, (err, res, body) => {
-        console.log(err, body);
+      this.makeRequest("messages.send", { peer_id: chatId, message: message }, (err, res, body) => {
         if (err) {
-          console.log(err, body);
           reject();
         } else {
           resolve();
