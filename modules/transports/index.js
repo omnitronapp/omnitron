@@ -6,7 +6,6 @@ import { Transport as TelegramTransport } from "./builtin/telegramTransport";
 import { Transport as WhatsappTransport } from "./builtin/whatsappTransport";
 import { Transport as VKTransport } from "./builtin/vkTransport";
 import { Transport as MessengerTwilio } from "./builtin/messengerTwilioTransport";
-import { Transport as ZapierTransport } from "./builtin/zapierTransport";
 
 export const Transports = new TransportsClass();
 
@@ -15,8 +14,7 @@ export function registerBasicTransports() {
     new TelegramTransport(),
     new WhatsappTransport(),
     new MessengerTwilio(),
-    new VKTransport(),
-    new ZapierTransport()
+    new VKTransport()
   ];
 
   builtInTransports.forEach(transport => {
