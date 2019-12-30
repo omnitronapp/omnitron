@@ -7,7 +7,7 @@ import {
   ListItemText,
   ListItemAvatar,
   ListItemSecondaryAction,
-  Chip,
+  Badge,
   makeStyles
 } from "@material-ui/core";
 
@@ -29,7 +29,7 @@ function differMessages(readMessages, messagesCount) {
 
 function showUnreadMessages(differ, classes) {
   if (differ > 0) {
-    return <Chip className={classes.chip} size="small" label={differ} />;
+    return <Badge badgeContent={differ} color="primary" />;
   }
 
   return null;
