@@ -8,20 +8,40 @@ Meteor.methods({
     check(_id, String);
     check(enabled, Boolean);
 
-    TransportsCollection.update(_id, {
-      $set: {
-        enabled
-      }
-    });
+    const transportEntry = TransportsCollection.findOne(_id);
+    const checkResult = Transports.checkCredentials(transportEntry);
+
+    if (checkResult === true) {
+      TransportsCollection.update(_id, {
+        $set: {
+          enabled
+        }
+      });
+    } else {
+      TransportsCollection.update(_id, {
+        $set: {
+          enabled: false,
+          errorMessage: checkResult
+        }
+      });
+    }
   },
   updateTransportCredential(_id, key, value) {
     check(_id, String);
     check(key, String);
     check(value, String);
 
+    const transportEntry = TransportsCollection.findOne(_id);
+    transportEntry.credentials[key] = value;
+    const checkResult = Transports.checkCredentials(transportEntry);
+
+    const correctCreds = checkResult === true;
+
     TransportsCollection.update(_id, {
       $set: {
-        [`credentials.${key}`]: value
+        [`credentials.${key}`]: value,
+        enabled: transportEntry.enabled && correctCreds,
+        errorMessage: correctCreds ? null : checkResult
       }
     });
   }

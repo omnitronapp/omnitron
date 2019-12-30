@@ -8,7 +8,8 @@ import {
   Tab,
   Typography,
   FormControlLabel,
-  Grid
+  Grid,
+  makeStyles
 } from "@material-ui/core";
 
 import { Meteor } from "meteor/meteor";
@@ -17,6 +18,7 @@ import { TransportsCollection } from "../../collections";
 import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
 import TransportWebhooksInformation from "./TransportWebhooksInformation";
+import { red } from "@material-ui/core/colors";
 
 function a11yProps(index) {
   return {
@@ -31,7 +33,15 @@ function getTransportTabs(transports) {
   });
 }
 
+const style = makeStyles({
+  errorMessage: {
+    color: red[400]
+  }
+});
+
 function TransportTabPanel(props) {
+  const classes = style();
+
   const { value, index, transport } = props;
 
   function onCredentialChange(event, asd) {
@@ -68,7 +78,7 @@ function TransportTabPanel(props) {
           label="Enabled"
           onChange={onTransportStatusChange}
         />
-
+        <p className={classes.errorMessage}>{transport.errorMessage}</p>
         <p>
           To properly configure {transport.channel} channel go to:{" "}
           <a href={transport.linkToInstructions} target="_blank">
@@ -103,8 +113,6 @@ function TransportSettingsPage({ ready, transports }) {
   function handleChange(event, newTabIndex) {
     setCurrentTab(newTabIndex);
   }
-
-  const tabPanels = getTransportTabPanels(transports, currentTab);
 
   return (
     <Container>

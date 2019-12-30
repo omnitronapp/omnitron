@@ -47,8 +47,18 @@ export class Transports {
     }
   }
 
-  // TODO: Complete
-  areCredentialsSatisfied() {}
+  checkCredentials(transportEntry) {
+    const { requiredCredentials = [], credentials = {} } = transportEntry;
+
+    let result = true;
+    requiredCredentials.forEach(({ key, title }) => {
+      if (credentials[key] === undefined || credentials[key] === null || credentials[key] === "") {
+        result = `Required ${title} not provided`;
+      }
+    });
+
+    return result;
+  }
 
   configureTransport(name) {
     const transport = this.getTransport(name);
@@ -57,8 +67,34 @@ export class Transports {
 
     if (transportEntry) {
       if (transportEntry.enabled) {
-        transport.configure(transportEntry);
-        transport.configureHandlers(transportEntry);
+        const checkResult = this.checkCredentials(transportEntry);
+
+        if (checkResult === true) {
+          TransportsCollection.update(
+            {
+              _id: transportEntry._id
+            },
+            {
+              $set: {
+                errorMessage: null
+              }
+            }
+          );
+
+          transport.configure(transportEntry);
+          transport.configureHandlers(transportEntry);
+        } else {
+          TransportsCollection.update(
+            {
+              _id: transportEntry._id
+            },
+            {
+              $set: {
+                errorMessage: checkResult
+              }
+            }
+          );
+        }
       } else {
         console.log(`Transport ${name} is disabled`);
       }

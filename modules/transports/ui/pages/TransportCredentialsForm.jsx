@@ -15,6 +15,7 @@ export default function TransportCredentialsForm({ transport, onChange }) {
         onChange={onChange}
         value={value}
         type={item.type}
+        required
       />
     );
   });

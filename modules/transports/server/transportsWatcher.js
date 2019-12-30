@@ -1,7 +1,7 @@
 import { TransportsCollection } from "../collections";
 import { Transports } from "../";
 
-function processTransportChange(_id) {
+function processTransportChange(_id, changes = {}) {
   const transportEntry = TransportsCollection.findOne(_id);
 
   // were removed from database
@@ -16,7 +16,7 @@ function processTransportChange(_id) {
       Transports.stop(removedTransport);
     }
   } else {
-    // were updated
+    // transport was updated
     Transports.stop(transportEntry.name);
 
     if (transportEntry.enabled) {
