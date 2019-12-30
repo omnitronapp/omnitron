@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -17,7 +16,6 @@ import { TransportsCollection } from "../../collections";
 import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
 import TransportWebhooksInformation from "./TransportWebhooksInformation";
-import red from "@material-ui/core/colors/red";
 
 function a11yProps(index) {
   return {
@@ -74,6 +72,12 @@ function TransportTabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
     >
       <Container>
+        <Typography>
+          To properly configure {transport.channel} channel go to:{" "}
+          <a href={transport.linkToInstructions} target="_blank">
+            {transport.channel} instructions
+          </a>
+        </Typography>
         <TransportCredentialsForm
           transport={transport}
           credentials={credentials}
@@ -87,21 +91,16 @@ function TransportTabPanel(props) {
           onChange={onTransportStatusChange}
         />
 
-        <Button color="primary" onClick={onSave}>
-          Save
-        </Button>
+        <div>
+          <Button color="primary" onClick={onSave} variant="contained">
+            Save
+          </Button>
+        </div>
 
         <Typography color="error">{transport.errorMessage}</Typography>
 
         <Typography color={transport.enabled ? "primary" : "error"}>
           Status: {transport.enabled ? "Enabled" : "Disabled"}
-        </Typography>
-
-        <Typography>
-          To properly configure {transport.channel} channel go to:{" "}
-          <a href={transport.linkToInstructions} target="_blank">
-            {transport.channel} instructions
-          </a>
         </Typography>
       </Container>
     </Typography>
