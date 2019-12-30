@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
@@ -9,8 +10,6 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
-
-import { makeStyles } from "@material-ui/core/styles";
 
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
@@ -33,29 +32,37 @@ function getTransportTabs(transports) {
   });
 }
 
-const style = makeStyles({
-  errorMessage: {
-    color: red[400]
-  }
-});
-
 function TransportTabPanel(props) {
-  const classes = style();
-
   const { value, index, transport } = props;
 
-  function onCredentialChange(event, asd) {
+  const [credentials, setCredentials] = useState(transport.credentials);
+  const [enabled, setEnabled] = useState(transport.enabled);
+
+  function onCredentialChange(event) {
     const { name, value } = event.target;
 
-    Meteor.call("updateTransportCredential", transport._id, name, value, (err, res) => {
-      console.log(err, res);
+    setCredentials({
+      ...credentials,
+      [name]: value
     });
   }
 
-  function onTransportStatusChange(event, enabled) {
-    Meteor.call("changeTransportStatus", transport._id, enabled, (err, res) => {
-      console.log(err, res);
-    });
+  function onTransportStatusChange(event, newValue) {
+    setEnabled(newValue);
+  }
+
+  function onSave() {
+    Meteor.call(
+      "updateTransport",
+      {
+        transportId: transport._id,
+        credentials,
+        enabled
+      },
+      (err, res) => {
+        console.log(err, res);
+      }
+    );
   }
 
   return (
@@ -69,22 +76,33 @@ function TransportTabPanel(props) {
       <Container>
         <TransportCredentialsForm
           transport={transport}
-          credentials={transport.credentials}
+          credentials={credentials}
           onChange={onCredentialChange}
         />
         <TransportWebhooksInformation webhooks={transport.webhookEndpoints} />
         <FormControlLabel
-          control={<Checkbox checked={transport.enabled} value={"Enabled"} />}
+          control={<Checkbox checked={enabled} value={"Enabled"} />}
           label="Enabled"
+          fullWidth
           onChange={onTransportStatusChange}
         />
-        <p className={classes.errorMessage}>{transport.errorMessage}</p>
-        <p>
+
+        <Button color="primary" onClick={onSave}>
+          Save
+        </Button>
+
+        <Typography color="error">{transport.errorMessage}</Typography>
+
+        <Typography color={transport.enabled ? "primary" : "error"}>
+          Status: {transport.enabled ? "Enabled" : "Disabled"}
+        </Typography>
+
+        <Typography>
           To properly configure {transport.channel} channel go to:{" "}
           <a href={transport.linkToInstructions} target="_blank">
             {transport.channel} instructions
           </a>
-        </p>
+        </Typography>
       </Container>
     </Typography>
   );

@@ -4,45 +4,31 @@ import { Transports } from "../";
 import { TransportsCollection } from "../collections";
 
 Meteor.methods({
-  changeTransportStatus(_id, enabled) {
-    check(_id, String);
+  updateTransport({ transportId, credentials, enabled }) {
+    check(transportId, String);
+    check(credentials, Object);
     check(enabled, Boolean);
 
-    const transportEntry = TransportsCollection.findOne(_id);
+    const updateFields = {
+      credentials,
+      enabled
+    };
+
+    const transportEntry = TransportsCollection.findOne(transportId);
+    transportEntry.credentials = credentials;
+
     const checkResult = Transports.checkCredentials(transportEntry);
 
-    if (checkResult === true) {
-      TransportsCollection.update(_id, {
-        $set: {
-          enabled
-        }
-      });
+    // did not pass check
+    if (checkResult !== true) {
+      updateFields.enabled = false;
+      updateFields.errorMessage = checkResult;
     } else {
-      TransportsCollection.update(_id, {
-        $set: {
-          enabled: false,
-          errorMessage: checkResult
-        }
-      });
+      updateFields.errorMessage = null;
     }
-  },
-  updateTransportCredential(_id, key, value) {
-    check(_id, String);
-    check(key, String);
-    check(value, String);
 
-    const transportEntry = TransportsCollection.findOne(_id);
-    transportEntry.credentials[key] = value;
-    const checkResult = Transports.checkCredentials(transportEntry);
-
-    const correctCreds = checkResult === true;
-
-    TransportsCollection.update(_id, {
-      $set: {
-        [`credentials.${key}`]: value,
-        enabled: transportEntry.enabled && correctCreds,
-        errorMessage: correctCreds ? null : checkResult
-      }
+    TransportsCollection.update(transportId, {
+      $set: updateFields
     });
   }
 });
