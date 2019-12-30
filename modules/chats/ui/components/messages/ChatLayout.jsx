@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ChatLayout({ chatId }) {
+export default function ChatLayout({ chatId, options, changeLimit }) {
   const classes = useStyles();
 
   function showChat() {
@@ -45,7 +45,7 @@ export default function ChatLayout({ chatId }) {
     } else {
       return (
         <>
-          <ChatWindow key="chat" chatId={chatId} />
+          <ChatWindow changeLimit={changeLimit} options={options} key="chat" chatId={chatId} />
           <ChatInput key="input" chatId={chatId} />
         </>
       );

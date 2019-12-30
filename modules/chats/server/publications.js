@@ -23,10 +23,11 @@ Meteor.publish("chats", function(name, options) {
   return ChatsCollection.find(filters, options);
 });
 
-Meteor.publish("messages", function({ chatId }) {
+Meteor.publish("messages", function({ chatId, limit }) {
+  check(limit, Number);
+
   if (!this.userId || !chatId) {
     return this.ready();
   }
-
-  return MessagesCollection.find({ chatId }, { sort: { createdAt: 1 } });
+  return MessagesCollection.find({ chatId }, { sort: { createdAt: -1 }, limit });
 });

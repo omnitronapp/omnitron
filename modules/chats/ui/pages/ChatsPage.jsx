@@ -22,15 +22,28 @@ const useStyles = makeStyles(theme => ({
 export default function ChatsPage() {
   const [currentChatId, setChatId] = useState(null);
   const [searchChat, setSearchChat] = useState("");
+  const [options, setOptions] = useState({
+    limit: 20
+  });
 
   function onChatSelect(chatId) {
     setChatId(chatId);
+    setOptions({
+      limit: 20
+    });
   }
 
   const onChatSearch = function(text) {
     setSearchChat(text);
     setChatId(null);
   };
+
+  function changeLimit(limit) {
+    setOptions({
+      ...options,
+      limit
+    });
+  }
 
   const classes = useStyles();
 
@@ -48,7 +61,7 @@ export default function ChatsPage() {
         </Box>
       </Grid>
       <Grid item xs={8} className={classes.messagesGrid}>
-        <ChatLayout chatId={currentChatId} />
+        <ChatLayout changeLimit={changeLimit} options={options} chatId={currentChatId} />
       </Grid>
     </Grid>
   );

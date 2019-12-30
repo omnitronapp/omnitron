@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ChatWindow({ groupedMessages, ready, chat, chatId }) {
+function ChatWindow({ groupedMessages, ready, chat, chatId, options, changeLimit }) {
   if (!ready) {
     return null;
   }
@@ -64,10 +64,20 @@ function ChatWindow({ groupedMessages, ready, chat, chatId }) {
     if (scrollToBottom !== userScrollToBottom) {
       setScrollToBottom(userScrollToBottom);
     }
+
+    if (target.scrollTop <= 50) {
+      changeLimit(options.limit + 20);
+    }
   }
 
   return (
-    <Paper square elevation={0} className={classes.root} onScroll={onScroll} ref={chatPaperRef}>
+    <Paper
+      square
+      elevation={0}
+      className={classes.root}
+      onScroll={_.debounce(onScroll, 500, true)}
+      ref={chatPaperRef}
+    >
       {groupedMessages.map(messages => {
         const createdAt = messages[0].createdAt;
         const date = moment(createdAt).format("dddd, MMM DD, YYYY");
@@ -77,8 +87,9 @@ function ChatWindow({ groupedMessages, ready, chat, chatId }) {
   );
 }
 
-export default withTracker(({ chatId }) => {
-  const subHandler = Meteor.subscribe("messages", { chatId });
+export default withTracker(({ chatId, options }) => {
+  const { limit } = options;
+  const subHandler = Meteor.subscribe("messages", { chatId, limit });
   const messages = MessagesCollection.find({}, { sort: { createdAt: 1 } }).fetch();
 
   let messageGroupsByDate = _.chain(messages)
