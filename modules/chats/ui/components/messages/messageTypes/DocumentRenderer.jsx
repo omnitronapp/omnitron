@@ -1,14 +1,14 @@
 import React from "react";
-import {
-  List,
-  ListItem,
-  ListItemText,
-  Avatar,
-  makeStyles,
-  ListItemAvatar,
-  Typography,
-  Link
-} from "@material-ui/core";
+
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Avatar from "@material-ui/core/Avatar";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Typography from "@material-ui/core/Typography";
+import Link from "@material-ui/core/Link";
+import { makeStyles } from "@material-ui/core/styles";
+
 import InsertDriveFile from "@material-ui/icons/InsertDriveFile";
 import { trimMessage, getReadableSize } from "../../../../../utils";
 

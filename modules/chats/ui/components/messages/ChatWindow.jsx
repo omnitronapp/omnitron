@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import _ from "underscore";
 
-import { Paper, makeStyles } from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { MessagesCollection, ChatsCollection } from "../../../collections";
 import MessageGroup from "./MessageGroup";

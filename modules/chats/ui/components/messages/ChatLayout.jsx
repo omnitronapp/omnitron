@@ -1,6 +1,9 @@
 import React from "react";
 
-import { Typography, Grid, makeStyles } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+
+import { makeStyles } from "@material-ui/core/styles";
 
 import ChatWindow from "./ChatWindow";
 import ChatInput from "../ChatInput";

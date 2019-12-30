@@ -2,7 +2,11 @@ import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 
 import React from "react";
-import { Container, Paper, TextField, Button } from "@material-ui/core";
+
+import Container from "@material-ui/core/Container";
+import Paper from "@material-ui/core/Paper";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 
 function ProfilePage({ user }) {
   const [credentials, setCredentials] = React.useState({ username: user.username, password: "" });

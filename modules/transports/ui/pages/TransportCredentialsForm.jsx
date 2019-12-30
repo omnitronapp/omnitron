@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
 
 export default function TransportCredentialsForm({ transport, onChange }) {
   const credentialsForm = (transport.requiredCredentials || []).map(item => {

@@ -1,15 +1,14 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
 
-import {
-  Avatar,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  ListItemSecondaryAction,
-  Badge,
-  makeStyles
-} from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import Badge from "@material-ui/core/Badge";
+
+import { makeStyles } from "@material-ui/core/styles";
 
 import ChannelIcon from "./ChannelIcon";
 

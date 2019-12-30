@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Container,
-  Checkbox,
-  Paper,
-  Tabs,
-  Tab,
-  Typography,
-  FormControlLabel,
-  Grid,
-  makeStyles
-} from "@material-ui/core";
+
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import Checkbox from "@material-ui/core/Checkbox";
+import Paper from "@material-ui/core/Paper";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Grid from "@material-ui/core/Grid";
+
+import { makeStyles } from "@material-ui/core/styles";
 
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
@@ -18,7 +18,7 @@ import { TransportsCollection } from "../../collections";
 import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
 import TransportWebhooksInformation from "./TransportWebhooksInformation";
-import { red } from "@material-ui/core/colors";
+import red from "@material-ui/core/colors/red";
 
 function a11yProps(index) {
   return {
