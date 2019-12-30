@@ -11,7 +11,7 @@ import {
   makeStyles
 } from "@material-ui/core";
 
-import { AccountCircle } from "@material-ui/icons";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles(theme => ({
   appBar: {

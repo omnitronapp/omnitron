@@ -9,7 +9,7 @@ import {
   Typography,
   Link
 } from "@material-ui/core";
-import { InsertDriveFile } from "@material-ui/icons";
+import InsertDriveFile from "@material-ui/icons/InsertDriveFile";
 import { trimMessage, getReadableSize } from "../../../../../utils";
 
 const useStyles = makeStyles(theme => ({

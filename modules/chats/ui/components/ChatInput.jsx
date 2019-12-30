@@ -3,7 +3,7 @@ import { Meteor } from "meteor/meteor";
 import React, { useState } from "react";
 
 import { Grid, TextField, IconButton, makeStyles } from "@material-ui/core";
-import { Send } from "@material-ui/icons";
+import Send from "@material-ui/icons/Send";
 
 const useStyles = makeStyles(theme => ({
   grid: {

@@ -18,7 +18,7 @@ import {
   makeStyles
 } from "@material-ui/core";
 
-import { LockOutlined } from "@material-ui/icons";
+import LockOutlined from "@material-ui/icons/LockOutlined";
 
 const useStyles = makeStyles(theme => ({
   "@global": {

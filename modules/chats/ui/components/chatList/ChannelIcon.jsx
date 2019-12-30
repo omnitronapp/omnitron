@@ -1,6 +1,8 @@
 import React from "react";
 
-import { WhatsApp, Telegram, Facebook } from "@material-ui/icons";
+import WhatsApp from "@material-ui/icons/WhatsApp";
+import Telegram from "@material-ui/icons/Telegram";
+import Facebook from "@material-ui/icons/Facebook";
 
 export default function ChannelIcon({ channel }) {
   if (channel === "whatsapp") {
