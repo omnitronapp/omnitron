@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { Grid, Divider, Box, makeStyles } from "@material-ui/core";
-
+import _ from "underscore";
 import ChatSearch from "../components/ChatSearch";
 import ChatsListWrapper from "../components/chatList/ChatsListWrapper";
 import ChatLayout from "../components/messages/ChatLayout";
@@ -23,15 +23,13 @@ export default function ChatsPage() {
   const [currentChatId, setChatId] = useState(null);
   const [searchChat, setSearchChat] = useState("");
   const [options, setOptions] = useState({
-    limit: 20,
-    page: 0
+    limit: 30
   });
 
   function onChatSelect(chatId) {
     setChatId(chatId);
     setOptions({
-      limit: 20,
-      page: 1
+      limit: 30
     });
   }
 
@@ -40,10 +38,10 @@ export default function ChatsPage() {
     setChatId(null);
   };
 
-  function changeLimit(page) {
+  function changeLimit(limit) {
     setOptions({
       ...options,
-      page
+      limit
     });
   }
 
@@ -63,7 +61,11 @@ export default function ChatsPage() {
         </Box>
       </Grid>
       <Grid item xs={8} className={classes.messagesGrid}>
-        <ChatLayout changeLimit={changeLimit} options={options} chatId={currentChatId} />
+        <ChatLayout
+          changeLimit={_.debounce(changeLimit, 400)}
+          options={options}
+          chatId={currentChatId}
+        />
       </Grid>
     </Grid>
   );

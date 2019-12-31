@@ -1,6 +1,5 @@
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import InfiniteScroll from "react-infinite-scroller";
 import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import _ from "underscore";
@@ -20,15 +19,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ChatWindow({ groupedMessages, ready, chat, chatId, options, changeLimit }) {
-  if (!ready) {
-    return null;
-  }
-
-  const loadMore = function() {
-    // changeLimit(options.page + 1);
-  };
-
+function ChatWindow({
+  groupedMessages,
+  ready,
+  chat,
+  chatId,
+  options,
+  changeLimit,
+  messagesLength
+}) {
   const classes = useStyles();
 
   const chatPaperRef = useRef(null);
@@ -44,19 +43,21 @@ function ChatWindow({ groupedMessages, ready, chat, chatId, options, changeLimit
     }
   }
 
-  useEffect(() => {
-    if (chatPaperRef && chatPaperRef.current) {
-      chatPaperRef.current.scrollTop = chatPaperRef.current.scrollHeight;
-      console.log("tuta", chatPaperRef.current.scrollTop);
-    }
-  }, []);
-
   useEffect(
     () => {
-      Meteor.call("setReadMessages", chatId);
-      scrollPaper();
+      if (ready) {
+        Meteor.call("setReadMessages", chatId);
+        scrollPaper();
+
+        if (!scrollToBottom) {
+          const newScrollTop =
+            chatPaperRef.current.scrollHeight - this.beforeScrollHeight + this.beforeScrollTop;
+
+          chatPaperRef.current.scrollTop = newScrollTop;
+        }
+      }
     },
-    [chat.messagesCount]
+    [chat.messagesCount, ready]
   );
 
   // scroll to the bottom when chat opened
@@ -77,34 +78,27 @@ function ChatWindow({ groupedMessages, ready, chat, chatId, options, changeLimit
       setScrollToBottom(userScrollToBottom);
     }
 
-    // console.log("here", target.scrollTop);
-
-    // if (target.scrollTop <= 50) {
-    //   changeLimit(options.limit + 20);
-    // }
+    if (target.scrollTop === 0 && messagesLength < chat.messagesCount) {
+      this.beforeScrollHeight = target.scrollHeight;
+      this.beforeScrollTop = target.scrollTop;
+      changeLimit(options.limit + 30);
+    }
   }
 
   return (
-    <Paper square elevation={0} className={classes.root} ref={chatPaperRef}>
-      <InfiniteScroll
-        pageStart={options.page || 1}
-        isReverse={true}
-        loadMore={loadMore}
-        hasMore={true}
-      >
-        {groupedMessages.map(messages => {
-          const createdAt = messages[0].createdAt;
-          const date = moment(createdAt).format("dddd, MMM DD, YYYY");
-          return <MessageGroup key={date} messages={messages} date={date} />;
-        })}
-      </InfiniteScroll>
+    <Paper square elevation={0} className={classes.root} onScroll={onScroll} ref={chatPaperRef}>
+      {groupedMessages.map(messages => {
+        const createdAt = messages[0].createdAt;
+        const date = moment(createdAt).format("dddd, MMM DD, YYYY");
+        return <MessageGroup key={date} messages={messages} date={date} />;
+      })}
     </Paper>
   );
 }
 
 export default withTracker(({ chatId, options }) => {
-  const { limit, page = 0 } = options;
-  const subHandler = Meteor.subscribe("messages", { chatId, limit: (page + 1) * 20 });
+  const { limit } = options;
+  const subHandler = Meteor.subscribe("messages", { chatId, limit });
   const messages = MessagesCollection.find({}, { sort: { createdAt: 1 } }).fetch();
 
   let messageGroupsByDate = _.chain(messages)
@@ -120,6 +114,7 @@ export default withTracker(({ chatId, options }) => {
     messages,
     ready: subHandler.ready(),
     groupedMessages: messageGroupsByDate,
-    chat: ChatsCollection.findOne({ _id: chatId })
+    chat: ChatsCollection.findOne({ _id: chatId }),
+    messagesLength: messages.length
   };
 })(ChatWindow);
