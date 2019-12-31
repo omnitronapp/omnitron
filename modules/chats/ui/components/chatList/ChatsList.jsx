@@ -3,7 +3,9 @@ import { withTracker } from "meteor/react-meteor-data";
 
 import React from "react";
 import InfiniteScroll from "react-infinite-scroller";
-import { List, makeStyles } from "@material-ui/core/";
+
+import List from "@material-ui/core/List";
+import { makeStyles } from "@material-ui/core/styles";
 
 import ChatItem from "./ChatItem";
 import { ChatsCollection } from "../../../collections";

@@ -1,9 +1,9 @@
 import React from "react";
-import { TextField } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
 
-export default function TransportCredentialsForm({ transport, onChange }) {
+export default function TransportCredentialsForm({ transport, credentials, onChange }) {
   const credentialsForm = (transport.requiredCredentials || []).map(item => {
-    const value = transport.credentials[item.key];
+    const value = credentials[item.key];
 
     const key = `${transport.name}-${item.key}`;
     return (

@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
-import { Grid, Divider, Box, makeStyles } from "@material-ui/core";
 import _ from "underscore";
+
+import Grid from "@material-ui/core/Grid";
+import Divider from "@material-ui/core/Divider";
+import Box from "@material-ui/core/Box";
+
+import { makeStyles } from "@material-ui/core/styles";
+
 import ChatSearch from "../components/ChatSearch";
 import ChatsListWrapper from "../components/chatList/ChatsListWrapper";
 import ChatLayout from "../components/messages/ChatLayout";

@@ -1,16 +1,15 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
-import {
-  AppBar,
-  Button,
-  Toolbar,
-  Typography,
-  IconButton,
-  Menu,
-  MenuItem,
-  makeStyles
-} from "@material-ui/core";
 
+import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+
+import { makeStyles } from "@material-ui/core/styles";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles(theme => ({
@@ -55,7 +54,9 @@ function TopAppBar({ history }) {
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Typography variant="h6" noWrap className={classes.title}>
-          Omnitron
+          <Link to="/" className={classes.appBarMenuLinks}>
+            Omnitron
+          </Link>
         </Typography>
         <Link to="/chats" className={classes.appBarMenuLinks}>
           <Button color="inherit">Chats</Button>
