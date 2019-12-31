@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import _ from "underscore";
 
+import LoadingBar from "../../../../layouts/components/LoadingBar";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -21,10 +22,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ChatWindow({ groupedMessages, ready, chat, chatId }) {
-  if (!ready) {
-    return null;
-  }
-
   const classes = useStyles();
 
   const chatPaperRef = useRef(null);
@@ -42,18 +39,22 @@ function ChatWindow({ groupedMessages, ready, chat, chatId }) {
 
   useEffect(
     () => {
-      Meteor.call("setReadMessages", chatId);
-      scrollPaper();
+      if (ready) {
+        Meteor.call("setReadMessages", chatId);
+        scrollPaper();
+      }
     },
-    [chat.messagesCount]
+    [chat.messagesCount, ready]
   );
 
   // scroll to the bottom when chat opened
   useEffect(
     () => {
-      scrollPaper();
+      if (ready) {
+        scrollPaper();
+      }
     },
-    [chatId]
+    [chatId, ready]
   );
 
   function onScroll(event) {
@@ -65,6 +66,14 @@ function ChatWindow({ groupedMessages, ready, chat, chatId }) {
     if (scrollToBottom !== userScrollToBottom) {
       setScrollToBottom(userScrollToBottom);
     }
+  }
+
+  if (!ready) {
+    return (
+      <Paper square elevation={0} className={classes.root} onScroll={onScroll} ref={chatPaperRef}>
+        <LoadingBar />
+      </Paper>
+    );
   }
 
   return (

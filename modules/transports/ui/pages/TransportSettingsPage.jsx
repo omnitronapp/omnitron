@@ -91,17 +91,17 @@ function TransportTabPanel(props) {
           onChange={onTransportStatusChange}
         />
 
-        <div>
-          <Button color="primary" onClick={onSave} variant="contained">
-            Save
-          </Button>
-        </div>
-
         <Typography color="error">{transport.errorMessage}</Typography>
 
         <Typography color={transport.enabled ? "primary" : "error"}>
           Status: {transport.enabled ? "Enabled" : "Disabled"}
         </Typography>
+
+        <div>
+          <Button color="primary" onClick={onSave} variant="contained">
+            Save
+          </Button>
+        </div>
       </Container>
     </Typography>
   );

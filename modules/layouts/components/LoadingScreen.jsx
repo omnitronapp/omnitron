@@ -1,16 +1,13 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { BarLoader } from "react-spinners";
+import LoadingBar from "./LoadingBar";
 
 const useStyles = makeStyles({
   loadingScreen: {
     position: "fixed",
     width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    height: "100%"
   }
 });
 
@@ -19,7 +16,7 @@ export function LoadingScreen() {
 
   return (
     <div className={classes.loadingScreen}>
-      <BarLoader height={5} width={150} color="#3696ff" />
+      <LoadingBar />
     </div>
   );
 }
