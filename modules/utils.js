@@ -1,3 +1,9 @@
+import moment from "moment";
+
+export function formatDate(date, format = "DD.MM.YYYY") {
+  return moment(date).format(format);
+}
+
 export function trimMessage(message, maxLength = 13, length = 10) {
   if (!message) {
     return "";

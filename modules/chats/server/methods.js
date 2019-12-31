@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
-import { MessagesCollection, RawMessagesCollection } from "../collections";
+import { MessagesCollection, ChatNotesCollection, RawMessagesCollection } from "../collections";
 
 import { trimMessage } from "../../utils";
 import { ContactsCollection } from "../../contacts/collections";
@@ -238,5 +238,19 @@ Meteor.methods({
     }
 
     return ChatsCollection.update({ _id: chatId }, { $set: { readMessages } });
+  },
+  saveChatNote({ chatId, chatNote }) {
+    check(chatId, String);
+    check(chatNote, String);
+    check(this.userId, String);
+
+    const user = Meteor.user();
+
+    ChatNotesCollection.insert({
+      chatId,
+      text: chatNote,
+      username: user.username,
+      userId: this.userId
+    });
   }
 });

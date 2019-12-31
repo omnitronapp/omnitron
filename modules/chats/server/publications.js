@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check";
 
-import { ChatsCollection } from "../collections";
+import { ChatsCollection, ChatNotesCollection } from "../collections";
 import { MessagesCollection } from "../collections";
 
 Meteor.publish("chats", function(name, options) {
@@ -30,4 +30,14 @@ Meteor.publish("messages", function({ chatId, limit }) {
     return this.ready();
   }
   return MessagesCollection.find({ chatId }, { sort: { createdAt: -1 }, limit });
+});
+
+Meteor.publish("chatNotes", function(chatId) {
+  check(chatId, String);
+
+  if (!this.userId) {
+    return this.ready();
+  }
+
+  return ChatNotesCollection.find({ chatId });
 });

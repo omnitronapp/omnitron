@@ -178,3 +178,30 @@ export const MessageSchema = new SimpleSchema({
     optional: true
   }
 });
+
+export const ChatNoteSchema = new SimpleSchema({
+  chatId: {
+    type: String
+  },
+  text: {
+    type: String
+  },
+  username: {
+    type: String
+  },
+  userId: {
+    type: String
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function() {
+      if (this.isInsert) return new Date();
+    }
+  },
+  updatedAt: {
+    type: Date,
+    autoValue: function() {
+      return new Date();
+    }
+  }
+});
