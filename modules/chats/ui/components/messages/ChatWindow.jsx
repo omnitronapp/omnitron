@@ -63,6 +63,10 @@ function ChatWindow({
   // scroll to the bottom when chat opened
   useEffect(
     () => {
+      this.beforeScrollHeight = 0;
+      this.beforeScrollTop = 0;
+      setScrollToBottom(true);
+
       scrollPaper();
     },
     [chatId]
