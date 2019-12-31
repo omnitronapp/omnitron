@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import _ from "underscore";
 
-import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { MessagesCollection, ChatsCollection } from "../../../collections";
@@ -31,15 +30,15 @@ function ChatWindow({
 }) {
   const classes = useStyles();
 
-  const chatPaperRef = useRef(null);
+  const chatWrapperRef = useRef(null);
 
   const [scrollToBottom, setScrollToBottom] = useState(true);
 
-  function scrollPaper() {
-    if (chatPaperRef && chatPaperRef.current) {
+  function scrollDivToBottom() {
+    if (chatWrapperRef && chatWrapperRef.current) {
       if (scrollToBottom) {
-        chatPaperRef.current.scrollTop =
-          chatPaperRef.current.scrollHeight - chatPaperRef.current.clientHeight;
+        chatWrapperRef.current.scrollTop =
+          chatWrapperRef.current.scrollHeight - chatWrapperRef.current.clientHeight;
       }
     }
   }
@@ -48,13 +47,13 @@ function ChatWindow({
     () => {
       if (ready) {
         Meteor.call("setReadMessages", chatId);
-        scrollPaper();
+        scrollDivToBottom();
 
         if (!scrollToBottom) {
           const newScrollTop =
-            chatPaperRef.current.scrollHeight - this.beforeScrollHeight + this.beforeScrollTop;
+            chatWrapperRef.current.scrollHeight - this.beforeScrollHeight + this.beforeScrollTop;
 
-          chatPaperRef.current.scrollTop = newScrollTop;
+          chatWrapperRef.current.scrollTop = newScrollTop;
         }
       }
     },
@@ -68,7 +67,7 @@ function ChatWindow({
       this.beforeScrollTop = 0;
       setScrollToBottom(true);
 
-      scrollPaper();
+      scrollDivToBottom();
     },
     [chatId]
   );
@@ -91,13 +90,13 @@ function ChatWindow({
   }
 
   return (
-    <Paper square elevation={0} className={classes.root} onScroll={onScroll} ref={chatPaperRef}>
+    <div className={classes.root} onScroll={onScroll} ref={chatWrapperRef}>
       {groupedMessages.map(messages => {
         const createdAt = messages[0].createdAt;
         const date = moment(createdAt).format("dddd, MMM DD, YYYY");
         return <MessageGroup key={date} messages={messages} date={date} />;
       })}
-    </Paper>
+    </div>
   );
 }
 

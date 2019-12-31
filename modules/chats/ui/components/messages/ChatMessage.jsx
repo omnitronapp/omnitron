@@ -1,7 +1,6 @@
 import React from "react";
 import moment from "moment";
 
-import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -88,8 +87,8 @@ export default function ChatMessages({ message }) {
       alignItems="flex-start"
       justify={inbound ? "flex-start" : "flex-end"}
     >
-      <Paper elevation={0} className={inbound ? classes.cardInbound : classes.cardOutbound}>
-        <Paper elevation={0} className={inbound ? classes.chunkInbound : classes.chunkOutbound} />
+      <div className={inbound ? classes.cardInbound : classes.cardOutbound}>
+        <div className={inbound ? classes.chunkInbound : classes.chunkOutbound} />
         <ListItem className={classes.item}>
           <Grid item xs>
             <MessageRenderer message={message} />
@@ -100,7 +99,7 @@ export default function ChatMessages({ message }) {
             </Typography>
           </Grid>
         </ListItem>
-      </Paper>
+      </div>
     </Grid>
   );
 }
