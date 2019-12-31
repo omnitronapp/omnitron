@@ -54,7 +54,9 @@ function TopAppBar({ history }) {
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <Typography variant="h6" noWrap className={classes.title}>
-          Omnitron
+          <Link to="/" className={classes.appBarMenuLinks}>
+            Omnitron
+          </Link>
         </Typography>
         <Link to="/chats" className={classes.appBarMenuLinks}>
           <Button color="inherit">Chats</Button>
