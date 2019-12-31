@@ -23,13 +23,15 @@ export default function ChatsPage() {
   const [currentChatId, setChatId] = useState(null);
   const [searchChat, setSearchChat] = useState("");
   const [options, setOptions] = useState({
-    limit: 20
+    limit: 20,
+    page: 0
   });
 
   function onChatSelect(chatId) {
     setChatId(chatId);
     setOptions({
-      limit: 20
+      limit: 20,
+      page: 1
     });
   }
 
@@ -38,10 +40,10 @@ export default function ChatsPage() {
     setChatId(null);
   };
 
-  function changeLimit(limit) {
+  function changeLimit(page) {
     setOptions({
       ...options,
-      limit
+      page
     });
   }
 
