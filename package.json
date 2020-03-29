@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start": "meteor run",
-    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test": "BABEL_ENV=COVERAGE COVERAGE=1 COVERAGE_OUT_HTML=1 COVERAGE_APP_FOLDER=$PWD/ TEST_WATCH=1 meteor test --driver-package meteortesting:mocha --port 4000",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer",
     "cloc": "cloc --exclude-dir=node_modules,.meteor,package-lock.json ./"
@@ -31,6 +31,10 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
+    "babel-plugin-istanbul": "^6.0.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-datetime": "^1.5.0",
     "eslint": "6.0.1",
     "eslint-config-prettier": "6.0.0",
     "eslint-import-resolver-meteor": "0.4.0",
@@ -38,13 +42,41 @@
     "eslint-plugin-import": "2.18.0",
     "eslint-plugin-meteor": "^5.1.0",
     "eslint-plugin-prettier": "3.1.0",
+    "nyc": "^15.0.0",
+    "nyc-report-lcov-absolute": "^1.0.0",
     "prettier": "1.15.2"
+  },
+  "babel": {
+    "env": {
+      "COVERAGE": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    }
+  },
+  "nyc": {
+    "reporter": [
+      "nyc-report-lcov-absolute",
+      "lcovonly"
+    ],
+    "include": [
+      "**/*.js",
+      "**/*.js",
+      "**/**/*.js",
+      "**/**/**/*.js"
+    ],
+    "exclude": [
+      "**/*.test.js"
+    ],
+    "report-dir": ".nyc_output",
+    "sourceMap": false,
+    "instrument": false
   },
   "meteor": {
     "mainModule": {
       "client": "client/main.jsx",
       "server": "server/main.js"
-    },
-    "testModule": "tests/main.js"
+    }
   }
 }

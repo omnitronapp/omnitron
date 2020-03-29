@@ -24,3 +24,5 @@ accounts-password
 mikowals:batch-insert
 aldeed:collection2
 http
+xolvio:cleaner
+lmieulet:meteor-coverage
