@@ -1,5 +1,16 @@
 import { ChatsCollection } from "../chats/collections";
 import { TransportsCollection } from "./collections";
+import { LogsCollection } from "../logs/collections";
+
+function writeLog(transport, type, text) {
+  LogsCollection.insert({
+    event: "transport",
+    transport,
+    type,
+    text,
+    createdAt: new Date()
+  });
+}
 
 export class Transports {
   constructor() {
@@ -45,6 +56,12 @@ export class Transports {
 
       TransportsCollection.insert(newTransportEntry);
     }
+
+    writeLog(
+      transportInstance.name,
+      "debug",
+      `Transport ${transportInstance.name} was successfully registered`
+    );
   }
 
   checkCredentials(transportEntry) {
@@ -57,10 +74,16 @@ export class Transports {
       }
     });
 
+    if (result === true) {
+      writeLog(transportEntry.name, "debug", `Transport credentials are correct`);
+    } else {
+      writeLog(transportEntry.name, "error", `Please check transport credentials again!`);
+    }
+
     return result;
   }
 
-  configureTransport(name) {
+  async configureTransport(name) {
     const transport = this.getTransport(name);
 
     const transportEntry = TransportsCollection.findOne({ name });
@@ -81,8 +104,29 @@ export class Transports {
             }
           );
 
-          transport.configure(transportEntry);
-          transport.configureHandlers(transportEntry);
+          try {
+            await transport.configure(transportEntry);
+            await transport.configureHandlers(transportEntry);
+
+            writeLog(name, "debug", `Transport ${name} was configured`);
+          } catch (e) {
+            this.stop(name);
+            writeLog(name, "error", `Failed to configure ${name} transport: ${e.message}`);
+
+            TransportsCollection.update(
+              {
+                _id: transportEntry._id
+              },
+              {
+                $set: {
+                  enabled: false,
+                  errorMessage: e.message
+                }
+              }
+            );
+
+            console.error(e);
+          }
         } else {
           TransportsCollection.update(
             {
@@ -90,6 +134,7 @@ export class Transports {
             },
             {
               $set: {
+                enabled: false,
                 errorMessage: checkResult
               }
             }
@@ -99,6 +144,7 @@ export class Transports {
         console.log(`Transport ${name} is disabled`);
       }
     } else {
+      writeLog(name, "error", `Transport ${name} is not created in database`);
       throw new Error("Transport entry is not created in database");
     }
   }
@@ -127,6 +173,11 @@ export class Transports {
     if (transport && userChat) {
       transport.sendMessage(userChat.channelChatId, message);
     } else {
+      writeLog(
+        transport.name,
+        "error",
+        `Transport: ${transport.name}, chat ${chatId} in ${channel} not found!`
+      );
       console.error("chat not found");
     }
   }
@@ -134,5 +185,7 @@ export class Transports {
   stop(name) {
     const transportImpl = this.getTransport(name);
     transportImpl.stop();
+
+    writeLog(name, "warn", `Transport ${name} was stopped`);
   }
 }

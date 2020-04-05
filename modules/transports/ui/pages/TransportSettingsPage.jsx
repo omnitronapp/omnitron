@@ -16,6 +16,7 @@ import { TransportsCollection } from "../../collections";
 import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
 import TransportWebhooksInformation from "./TransportWebhooksInformation";
+import LogsList from "../../../logs/ui/components/LogsList";
 
 function a11yProps(index) {
   return {
@@ -102,6 +103,8 @@ function TransportTabPanel(props) {
             Save
           </Button>
         </div>
+
+        <LogsList filter={{ event: "transport", transport: transport.name }} />
       </Container>
     </Typography>
   );
