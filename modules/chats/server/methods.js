@@ -7,6 +7,8 @@ import { ContactsCollection } from "../../contacts/collections";
 import { ChatsCollection } from "../../chats/collections";
 import { Transports } from "../../transports";
 
+import { distributorInterface } from "../../distribution/server/";
+
 Meteor.methods({
   receiveMessage({ parsedMessage, rawMessage }) {
     check(parsedMessage, Object);
@@ -64,6 +66,8 @@ Meteor.methods({
           }
         ]
       });
+
+      distributorInterface.distributeChat(chatId);
     }
 
     // Chat exists, but contact does not: case in group messages
