@@ -64,6 +64,9 @@ function TopAppBar({ history }) {
         <Link to="/transports" className={classes.appBarMenuLinks}>
           <Button color="inherit">Transports</Button>
         </Link>
+        <Link to="/users" className={classes.appBarMenuLinks}>
+          <Button color="inherit">Users</Button>
+        </Link>
         <IconButton
           aria-label="account of current user"
           aria-controls="menu-appbar"

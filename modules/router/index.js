@@ -7,9 +7,10 @@ import BaseLayout from "../layouts/components/BaseLayout";
 import MainPage from "./mainPage";
 import ChatsPage from "../chats/ui/pages/ChatsPage";
 import TransportSettingsPage from "../transports/ui/pages/TransportSettingsPage";
-import LoginPage from "../users/ui/pages/LoginPage";
 
+import LoginPage from "../users/ui/pages/LoginPage";
 import ProfilePage from "../users/ui/pages/ProfilePage";
+import UsersPage from "../users/ui/pages/UsersPage";
 
 export function AppRouter(props) {
   return (
@@ -31,6 +32,11 @@ export function AppRouter(props) {
         <Route path="/transports">
           <BaseLayout>
             <TransportSettingsPage />
+          </BaseLayout>
+        </Route>
+        <Route path="/users">
+          <BaseLayout>
+            <UsersPage />
           </BaseLayout>
         </Route>
         <Route path="/login">

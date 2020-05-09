@@ -14,5 +14,18 @@ Meteor.methods({
     }
 
     Accounts.setPassword(Meteor.userId(), credentials.password, { logout: true });
+  },
+  removeUser(userIdToRemove) {
+    check(this.userId, String);
+    check(userIdToRemove, String);
+
+    Meteor.users.update(
+      { _id: userIdToRemove },
+      {
+        $set: {
+          active: false
+        }
+      }
+    );
   }
 });
