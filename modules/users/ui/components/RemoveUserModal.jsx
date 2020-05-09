@@ -8,6 +8,10 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 
 function RemoveUserModal({ open, onClose, onRemove, userId }) {
+  if (!open) {
+    return <></>;
+  }
+
   return (
     <Dialog
       open={open}

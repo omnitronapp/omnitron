@@ -27,5 +27,30 @@ Meteor.methods({
         }
       }
     );
+  },
+  editUser(userIdToEdit, userProps) {
+    check(this.userId, String);
+    check(userIdToEdit, String);
+    check(userProps, Object);
+
+    const user = Meteor.users.findOne({ _id: userIdToEdit });
+
+    if (user.username !== userProps.username) {
+      Accounts.setUsername(userIdToEdit, userProps.username);
+    }
+    if (userProps.password && userProps.password !== "") {
+      Accounts.setPassword(userIdToEdit, userProps.password);
+    }
+  },
+  addUser(userProps) {
+    check(this.userId, String);
+    check(userProps, Object);
+
+    const userId = Accounts.createUser({
+      username: userProps.username,
+      password: userProps.password
+    });
+
+    return userId;
   }
 });

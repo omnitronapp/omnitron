@@ -5,6 +5,7 @@ import React from "react";
 import { toast } from "react-toastify";
 
 import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -18,20 +19,23 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { makeStyles } from "@material-ui/core/styles";
 
+import EditUserModal from "../components/AddEditUserModal";
 import RemoveUserModal from "../components/RemoveUserModal";
 import LoadingBar from "../../../layouts/components/LoadingBar";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    maxWidth: 752
+const useStyles = makeStyles({
+  paper: {
+    padding: "32px",
+    paddingTop: "16px"
   }
-}));
+});
 
 function UsersPage({ ready, users }) {
-  const [removeUser, setRemoveUser] = React.useState();
-
   const classes = useStyles();
+
+  const [removeUser, setRemoveUser] = React.useState();
+  const [showAddEditUserModal, setShowAddEditUserModal] = React.useState(false);
+  const [editUser, setEditUser] = React.useState();
 
   if (!ready) {
     return <LoadingBar />;
@@ -41,9 +45,14 @@ function UsersPage({ ready, users }) {
     setRemoveUser(undefined);
   }
 
+  function onAddEditModalClose() {
+    setShowAddEditUserModal(false);
+    setEditUser(undefined);
+  }
+
   function onRemoveUser() {
     if (removeUser) {
-      setRemoveUser(undefined);
+      onRemoveModalClose();
 
       if (Meteor.user()._id === removeUser._id) {
         toast.warn("You can't remove yourself!");
@@ -61,6 +70,26 @@ function UsersPage({ ready, users }) {
     }
   }
 
+  function onUserSave(userProps) {
+    onAddEditModalClose();
+
+    if (editUser) {
+      Meteor.call("editUser", editUser._id, userProps, (err, res) => {
+        if (err) {
+          return toast.error("Failed to update the user");
+        }
+        return toast.success("Successfully updated the user");
+      });
+    } else {
+      Meteor.call("addUser", userProps, (err, res) => {
+        if (err) {
+          return toast.error("Failed to save the user");
+        }
+        return toast.success("Successfully saved the user");
+      });
+    }
+  }
+
   const usersList = users.map(user => {
     return (
       <ListItem key={user._id}>
@@ -69,7 +98,14 @@ function UsersPage({ ready, users }) {
         </ListItemAvatar>
         <ListItemText primary={user.username} />
         <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="edit">
+          <IconButton
+            edge="end"
+            aria-label="edit"
+            onClick={() => {
+              setShowAddEditUserModal(true);
+              setEditUser(user);
+            }}
+          >
             <EditIcon />
           </IconButton>
           <IconButton
@@ -88,16 +124,32 @@ function UsersPage({ ready, users }) {
 
   return (
     <Container>
-      <Paper>
-        <Typography variant="h6" className={classes.title}>
-          Users List
-        </Typography>
+      <Paper className={classes.paper}>
+        <Typography variant="h6">Users List</Typography>
         <List>{usersList}</List>
+
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => {
+            setEditUser(undefined);
+            setShowAddEditUserModal(true);
+          }}
+        >
+          Add user
+        </Button>
+
         <RemoveUserModal
           open={removeUser !== undefined}
           user={removeUser}
           onClose={onRemoveModalClose}
           onRemove={onRemoveUser}
+        />
+        <EditUserModal
+          open={showAddEditUserModal}
+          user={editUser}
+          onClose={onAddEditModalClose}
+          onSave={onUserSave}
         />
       </Paper>
     </Container>
