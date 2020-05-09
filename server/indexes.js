@@ -1,5 +1,6 @@
 import { ChatsCollection, MessagesCollection } from "../modules/chats/collections";
 import { TransportsCollection } from "../modules/transports/collections";
+import { DistributionAlgorithms } from "../modules/distribution/collections";
 
 const dbIndexesConf = [
   {
@@ -25,6 +26,14 @@ const dbIndexesConf = [
   },
   {
     collection: TransportsCollection,
+    indexes: [
+      {
+        name: 1
+      }
+    ]
+  },
+  {
+    collection: DistributionAlgorithms,
     indexes: [
       {
         name: 1

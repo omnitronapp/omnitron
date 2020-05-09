@@ -27,4 +27,10 @@ export class DistributorInterface {
       algorithm.distribute(chatId);
     }
   }
+
+  userDataChanged() {
+    Object.values(this.algorithmsMap).forEach(algorithmImpl => {
+      algorithmImpl.reconfigure();
+    });
+  }
 }

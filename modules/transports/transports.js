@@ -57,11 +57,11 @@ export class Transports {
       TransportsCollection.insert(newTransportEntry);
     }
 
-    writeLog(
-      transportInstance.name,
-      "debug",
-      `Transport ${transportInstance.name} was successfully registered`
-    );
+    // writeLog(
+    //   transportInstance.name,
+    //   "debug",
+    //   `Transport ${transportInstance.name} was successfully registered`
+    // );
   }
 
   checkCredentials(transportEntry) {

@@ -2,6 +2,8 @@ import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
 import { Accounts } from "meteor/accounts-base";
 
+import { distributorInterface } from "../../distribution/server";
+
 Meteor.methods({
   updateUserCredentials(credentials) {
     check(this.userId, String);
@@ -27,6 +29,9 @@ Meteor.methods({
         }
       }
     );
+
+    // Reconfigure  Distribution Algorithms
+    distributorInterface.userDataChanged();
   },
   editUser(userIdToEdit, userProps) {
     check(this.userId, String);
@@ -50,6 +55,9 @@ Meteor.methods({
       username: userProps.username,
       password: userProps.password
     });
+
+    // Reconfigure  Distribution Algorithms
+    distributorInterface.userDataChanged();
 
     return userId;
   }

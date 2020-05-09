@@ -8,8 +8,28 @@ export class RoundRobinAlgorithm {
     return "round-robin";
   }
 
+  // will reconfigure algorithm when user added/removed
+  reconfigure() {
+    const usersList = Meteor.users
+      .find({ active: { $ne: false } }, { fields: { _id: 1 } })
+      .map(user => user._id);
+
+    DistributionAlgorithms.update(
+      {
+        name: this.getName()
+      },
+      {
+        $set: {
+          usersList
+        }
+      }
+    );
+  }
+
   getDocInitialFields() {
-    const usersList = Meteor.users.find({}, { fields: { _id: 1 } }).map(user => user._id);
+    const usersList = Meteor.users
+      .find({ active: { $ne: false } }, { fields: { _id: 1 } })
+      .map(user => user._id);
 
     return {
       name: this.getName(),
