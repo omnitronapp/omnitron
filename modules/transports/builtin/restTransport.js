@@ -48,8 +48,6 @@ export class Transport extends EventEmitter {
     }
 
     this.credentials = credentials;
-
-    console.log(this.credentials);
   }
 
   async configureHandlers() {
