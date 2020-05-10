@@ -1,3 +1,5 @@
+import "./methods";
+import "./publications";
 import { DistributorInterface } from "./distributor";
 import { RoundRobinAlgorithm } from "./algorithms/roundRobin";
 

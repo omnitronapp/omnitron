@@ -76,14 +76,16 @@ function UsersPage({ ready, users }) {
     if (editUser) {
       Meteor.call("editUser", editUser._id, userProps, (err, res) => {
         if (err) {
-          return toast.error("Failed to update the user");
+          console.error(err);
+          return toast.error(`Failed to update the user: ${err.message}`);
         }
         return toast.success("Successfully updated the user");
       });
     } else {
       Meteor.call("addUser", userProps, (err, res) => {
         if (err) {
-          return toast.error("Failed to save the user");
+          console.error(err);
+          return toast.error(`Failed to save the user: ${err.message}`);
         }
         return toast.success("Successfully saved the user");
       });

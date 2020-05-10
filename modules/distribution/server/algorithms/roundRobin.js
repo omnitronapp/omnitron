@@ -11,8 +11,11 @@ export class RoundRobinAlgorithm {
   // will reconfigure algorithm when user added/removed
   reconfigure() {
     const usersList = Meteor.users
-      .find({ active: { $ne: false } }, { fields: { _id: 1 } })
-      .map(user => user._id);
+      .find({ active: { $ne: false } }, { fields: { _id: 1, username: 1 } })
+      .fetch();
+
+    const userIds = usersList.map(user => user._id);
+    const usernames = usersList.map(user => user.username);
 
     DistributionAlgorithms.update(
       {
@@ -20,7 +23,8 @@ export class RoundRobinAlgorithm {
       },
       {
         $set: {
-          usersList
+          userIds,
+          usernames
         }
       }
     );
@@ -28,37 +32,41 @@ export class RoundRobinAlgorithm {
 
   getDocInitialFields() {
     const usersList = Meteor.users
-      .find({ active: { $ne: false } }, { fields: { _id: 1 } })
-      .map(user => user._id);
+      .find({ active: { $ne: false } }, { fields: { _id: 1, username: 1 } })
+      .fetch();
+
+    const userIds = usersList.map(user => user._id);
+    const usernames = usersList.map(user => user.username);
 
     return {
       name: this.getName(),
-      usersList
+      userIds,
+      usernames
     };
   }
 
   getNextUser() {
     const algDoc = DistributionAlgorithms.findOne(
       { name: this.getName() },
-      { fields: { lastUsedUser: 1, usersList: 1 } }
+      { fields: { lastUsedUser: 1, userIds: 1 } }
     );
 
-    const { lastUsedUser, usersList } = algDoc;
+    const { lastUsedUser, userIds } = algDoc;
 
     let nextUser;
     // first time using this algorithm
     if (!lastUsedUser) {
-      nextUser = usersList[0];
+      nextUser = userIds[0];
     } else {
-      const lastUsedUserIndex = usersList.indexOf(lastUsedUser);
+      const lastUsedUserIndex = userIds.indexOf(lastUsedUser);
       // start next cycle
-      if (lastUsedUserIndex >= usersList.length - 1) {
-        nextUser = usersList[0];
+      if (lastUsedUserIndex >= userIds.length - 1) {
+        nextUser = userIds[0];
       } else {
-        nextUser = usersList[lastUsedUserIndex + 1];
+        nextUser = userIds[lastUsedUserIndex + 1];
 
         if (!nextUser) {
-          nextUser = usersList[0];
+          nextUser = userIds[0];
         }
       }
     }

@@ -7,6 +7,7 @@ import BaseLayout from "../layouts/components/BaseLayout";
 import MainPage from "./mainPage";
 import ChatsPage from "../chats/ui/pages/ChatsPage";
 import TransportSettingsPage from "../transports/ui/pages/TransportSettingsPage";
+import DistributionSettingsPage from "../distribution/ui/pages/DistributionSettingsPage";
 
 import LoginPage from "../users/ui/pages/LoginPage";
 import ProfilePage from "../users/ui/pages/ProfilePage";
@@ -37,6 +38,11 @@ export function AppRouter(props) {
         <Route path="/users">
           <BaseLayout>
             <UsersPage />
+          </BaseLayout>
+        </Route>
+        <Route path="/distribution">
+          <BaseLayout>
+            <DistributionSettingsPage />
           </BaseLayout>
         </Route>
         <Route path="/login">
