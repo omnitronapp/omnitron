@@ -27,6 +27,13 @@ export class Transports {
       })
     );
 
+    transportInstance.on(
+      "message_status",
+      Meteor.bindEnvironment(messageStatus => {
+        Meteor.call("changeMessageStatus", messageStatus);
+      })
+    );
+
     const transportEntry = TransportsCollection.findOne({
       name: transportInstance.name
     });
@@ -163,7 +170,7 @@ export class Transports {
     return this.transports[name];
   }
 
-  sendMessage(channel, chatId, message) {
+  sendMessage(channel, chatId, messageId, message) {
     const userChat = ChatsCollection.findOne({
       _id: chatId
     });
@@ -171,7 +178,7 @@ export class Transports {
     const transport = this.getTransport(channel);
 
     if (transport && userChat) {
-      transport.sendMessage(userChat.channelChatId, message);
+      transport.sendMessage(userChat.channelChatId, messageId, message);
     } else {
       writeLog(
         transport.name,

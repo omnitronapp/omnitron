@@ -128,6 +128,17 @@ Meteor.methods({
       rawMessageId
     };
   },
+  changeMessageStatus({ messageId, status, errorMessage }) {
+    MessagesCollection.update(
+      { _id: messageId },
+      {
+        $set: {
+          status,
+          errorMessage
+        }
+      }
+    );
+  },
   createMessage({ chatId, message }) {
     check(chatId, String);
     check(message, String);
@@ -215,7 +226,7 @@ Meteor.methods({
       }
     });
 
-    Transports.sendMessage(lastUsedChannel, chatId, message);
+    Transports.sendMessage(lastUsedChannel, chatId, messageId, message);
   },
   setReadMessages: function(chatId) {
     check(this.userId, String);

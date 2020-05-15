@@ -251,12 +251,35 @@ export class Transport extends EventEmitter {
     });
   }
 
-  sendMessage(chatId, message) {
+  sendMessage(chatId, messageId, message) {
     return new Promise((resolve, reject) => {
       if (this.bot) {
-        return this.bot.telegram.sendMessage(chatId, message).then(() => resolve(), () => reject());
+        return this.bot.telegram.sendMessage(chatId, message).then(
+          () => {
+            this.emit("message_status", {
+              messageId,
+              status: "sent"
+            });
+            resolve();
+          },
+          err => {
+            this.emit("message_status", {
+              messageId,
+              status: "error",
+              errorMessage: err.message
+            });
+
+            reject();
+          }
+        );
       } else {
-        reject("Bot is disabled");
+        this.emit("message_status", {
+          messageId,
+          status: "error",
+          errorMessage: "Transport is disabled"
+        });
+
+        reject("Transport is disabled");
       }
     });
   }
@@ -266,6 +289,7 @@ export class Transport extends EventEmitter {
     if (this.bot) {
       this.bot.stop(() => {
         console.error("telegram bot stopped");
+        this.bot = null;
       });
     }
   }
