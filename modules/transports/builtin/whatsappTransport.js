@@ -226,13 +226,18 @@ export class Transport extends EventEmitter {
           })
           .catch(err => {
             console.error(err);
+            this.emit("message_status", {
+              messageId,
+              status: "error",
+              errorMessage: err.message
+            });
           })
           .done(resolve);
       } else {
         this.emit("message_status", {
-          messageId: messageId,
+          messageId,
           status: "error",
-          errorMessage: "transport is disabled"
+          errorMessage: "Transport is disabled"
         });
       }
     });

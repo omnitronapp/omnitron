@@ -130,7 +130,8 @@ Meteor.methods({
   },
   changeMessageStatus({ messageId, status, errorMessage }) {
     MessagesCollection.update(
-      { _id: messageId },
+      // update by internal or external message id
+      { $or: [{ _id: messageId }, { messageId }] },
       {
         $set: {
           status,
