@@ -121,6 +121,28 @@ Meteor.methods({
       }
     );
 
+    // update all inbound message statuses to `read` except for error messages
+    MessagesCollection.update(
+      {
+        chatId,
+        inbound: false,
+        status: {
+          $in: ["created", "sent", "delivered"]
+        },
+        createdAt: {
+          $lte: new Date()
+        }
+      },
+      {
+        $set: {
+          status: "read"
+        }
+      },
+      {
+        multi: true
+      }
+    );
+
     return {
       chatId,
       contactId,
