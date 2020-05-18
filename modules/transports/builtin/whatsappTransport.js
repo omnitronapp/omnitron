@@ -52,6 +52,7 @@ export class Transport extends EventEmitter {
 	}
 
 	configure({ credentials }) {
+		
 		if (!credentials.accountSid || !credentials.authToken) {
 			throw new Error(`${this.name} transport credentails not provided`);
 		}
@@ -73,8 +74,15 @@ export class Transport extends EventEmitter {
 		const mainWebhook = this.webhookEndpoints().find(webhook => webhook.key === "webhook_url");
 
 		Rest.post(statusWebhook.url, (req, res) => {
-			// TODO: Handle status message
-			this.emit("message_status", {messageId: req.body.messageId, status: 'read'})
+			const incomingStatuses = {
+				'sent': 'sent',
+				'read': 'read',
+				'failed': 'error',
+				'delivered': 'delivered'
+			}
+
+			this.emit("message_status", {messageId: req.body.messageId, status: incomingStatuses[req.body.MessageStatus]})
+			
 			res.send({});
 		});
 
@@ -116,7 +124,6 @@ export class Transport extends EventEmitter {
 			mainWebhook.url,
 			Meteor.bindEnvironment((req, res) => {
 				const message = req.body;
-
 				const response = new Twilio.twiml.MessagingResponse();
 
 				const date = Date.now();
@@ -133,7 +140,7 @@ export class Transport extends EventEmitter {
 					text: message.Body,
 					type: "plain",
 					channel: "whatsapp"
-				};
+        };
 
 				if (message.NumMedia) {
 					for (let i = 0; i < message.NumMedia; i++) {
@@ -205,8 +212,7 @@ export class Transport extends EventEmitter {
 		);
 	}
 
-	sendMessage(chatId, message) {
-		message.status = 'sent'
+	sendMessage(chatId, messageId, message) {
 		return new Promise((resolve, reject) => {
 			if (this.client) {
 				this.client.messages
@@ -223,10 +229,13 @@ export class Transport extends EventEmitter {
 					.catch(
 						err => {
 							console.error(err)
-							message.status = 'error'
 						}
 					)
 					.done(resolve);
+			}
+			else
+			{
+				console.error("client is disabled")
 			}
 		});
 	}
