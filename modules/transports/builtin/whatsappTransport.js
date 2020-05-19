@@ -79,10 +79,11 @@ export class Transport extends EventEmitter {
           status: "error",
           errorMessage: req.body.ErrorMessage
         });
-      this.emit("message_status", {
-        messageId: req.body.messageId,
-        status: req.body.MessageStatus
-      });
+      else
+        this.emit("message_status", {
+          messageId: req.body.messageId,
+          status: req.body.MessageStatus
+        });
       res.send({});
     });
 
