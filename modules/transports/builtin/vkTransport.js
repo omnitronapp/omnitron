@@ -216,6 +216,7 @@ export class Transport extends EventEmitter {
           status: "error",
           errorMessage: "Transport is disabled"
         });
+        reject();
       }
     });
   }
