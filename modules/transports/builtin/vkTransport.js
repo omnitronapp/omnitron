@@ -187,14 +187,21 @@ export class Transport extends EventEmitter {
     );
   }
 
-  sendMessage(chatId, message) {
+  sendMessage(chatId, messageId, message) {
     return new Promise((resolve, reject) => {
       this.makeRequest("messages.send", { peer_id: chatId, message: message }, (err, res, body) => {
         if (err) {
-          message.status = 'error';
+          this.emit("message_status", {
+            messageId: messageId,
+            status: "error",
+            errorMessage: err.message
+          });
           reject();
         } else {
-          message.status = 'sent';
+          this.emit("message_status", {
+            messageId: messageId,
+            status: "delivered"
+          });
           resolve();
         }
       });
