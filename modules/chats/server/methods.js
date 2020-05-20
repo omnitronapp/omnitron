@@ -308,5 +308,18 @@ Meteor.methods({
     } else {
       throw new Error(`Message with id ${messageId} not found`);
     }
+  },
+  resendMessage(messageId) {
+    check(this.userId, String);
+    check(messageId, String);
+
+    const message = MessagesCollection.findOne(
+      { _id: messageId },
+      { fields: { status: 1, chatId: 1, channel: 1, message: 1 } }
+    );
+
+    if (message.status == "error") {
+      Transports.sendMessage(message.channel, message.chatId, messageId, message.message);
+    }
   }
 });
