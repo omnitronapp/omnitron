@@ -1,104 +1,104 @@
 import SimpleSchema from "simpl-schema";
 
 export const ChatSchema = new SimpleSchema({
-	name: {
-		type: String
-	},
-	type: {
-		type: String,
-		allowedValues: ["single", "group"],
-		defaultValue: "single"
-	},
-	channel: {
-		type: String
-	},
-	channelChatId: {
-		type: SimpleSchema.oneOf(String, Number)
-	},
-	contactIds: {
-		type: Array,
-		optional: true
-	},
-	"contactIds.$": {
-		type: Object
-	},
-	"contactIds.$.contactId": {
-		type: String
-	},
-	"contactIds.$.channelContactId": {
-		type: SimpleSchema.oneOf(String, Number)
-	},
-	lastMessageTrimmed: {
-		type: String,
-		optional: true
-	},
-	lastMessageId: {
-		type: String,
-		optional: true
-	},
-	latestActiveDate: {
-		type: Date,
-		optional: true
-	},
-	createdAt: {
-		type: Date,
-		autoValue: function() {
-			if (this.isInsert) return new Date();
-		}
-	},
-	updatedAt: {
-		type: Date,
-		autoValue: function() {
-			return new Date();
-		}
-	},
-	readMessages: {
-		type: Array,
-		optional: true,
-		defaultValue: []
-	},
-	"readMessages.$": {
-		type: Object
-	},
-	"readMessages.$.userId": {
-		type: String
-	},
-	"readMessages.$.count": {
-		type: Number
-	},
-	messagesCount: {
-		type: Number,
-		autoValue: function() {
-			if (this.isInsert) {
-				return 0;
-			}
-		}
-	}
+  name: {
+    type: String
+  },
+  type: {
+    type: String,
+    allowedValues: ["single", "group"],
+    defaultValue: "single"
+  },
+  channel: {
+    type: String
+  },
+  channelChatId: {
+    type: SimpleSchema.oneOf(String, Number)
+  },
+  contactIds: {
+    type: Array,
+    optional: true
+  },
+  "contactIds.$": {
+    type: Object
+  },
+  "contactIds.$.contactId": {
+    type: String
+  },
+  "contactIds.$.channelContactId": {
+    type: SimpleSchema.oneOf(String, Number)
+  },
+  lastMessageTrimmed: {
+    type: String,
+    optional: true
+  },
+  lastMessageId: {
+    type: String,
+    optional: true
+  },
+  latestActiveDate: {
+    type: Date,
+    optional: true
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function() {
+      if (this.isInsert) return new Date();
+    }
+  },
+  updatedAt: {
+    type: Date,
+    autoValue: function() {
+      return new Date();
+    }
+  },
+  readMessages: {
+    type: Array,
+    optional: true,
+    defaultValue: []
+  },
+  "readMessages.$": {
+    type: Object
+  },
+  "readMessages.$.userId": {
+    type: String
+  },
+  "readMessages.$.count": {
+    type: Number
+  },
+  messagesCount: {
+    type: Number,
+    autoValue: function() {
+      if (this.isInsert) {
+        return 0;
+      }
+    }
+  }
 });
 
 const DocumentSchema = new SimpleSchema({
-	title: String,
-	link: String,
-	size: Number
+  title: String,
+  link: String,
+  size: Number
 });
 
 const VoiceSchema = new SimpleSchema({
-	link: String,
-	duration: Number,
-	size: Number,
-	type: String
+  link: String,
+  duration: Number,
+  size: Number,
+  type: String
 });
 
 const ImageSchema = new SimpleSchema({
-	previewImage: String,
-	image: String
+  previewImage: String,
+  image: String
 });
 
 const VideoSchema = new SimpleSchema({
-	size: Number,
-	type: String,
-	duration: Number,
-	link: String
+  size: Number,
+  type: String,
+  duration: Number,
+  link: String
 });
 
 export const MessageSchema = new SimpleSchema({
@@ -160,7 +160,7 @@ export const MessageSchema = new SimpleSchema({
     type: String,
     optional: true,
     defaultValue: "created",
-    allowedValues: ["created", "sent", "error", "delivered", "read"]
+    allowedValues: ["created", "sent", "error", "delivered", "read", "removed"]
   },
   errorMessage: {
     type: String,
@@ -190,28 +190,28 @@ export const MessageSchema = new SimpleSchema({
 });
 
 export const ChatNoteSchema = new SimpleSchema({
-	chatId: {
-		type: String
-	},
-	text: {
-		type: String
-	},
-	username: {
-		type: String
-	},
-	userId: {
-		type: String
-	},
-	createdAt: {
-		type: Date,
-		autoValue: function() {
-			if (this.isInsert) return new Date();
-		}
-	},
-	updatedAt: {
-		type: Date,
-		autoValue: function() {
-			return new Date();
-		}
-	}
+  chatId: {
+    type: String
+  },
+  text: {
+    type: String
+  },
+  username: {
+    type: String
+  },
+  userId: {
+    type: String
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function() {
+      if (this.isInsert) return new Date();
+    }
+  },
+  updatedAt: {
+    type: Date,
+    autoValue: function() {
+      return new Date();
+    }
+  }
 });

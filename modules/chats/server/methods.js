@@ -290,5 +290,25 @@ Meteor.methods({
       username: user.username,
       userId: this.userId
     });
+  },
+  removeMessage(messageId) {
+    check(messageId, String);
+
+    return new Promise((resolve, reject) => {
+      const message = MessagesCollection.findOne({ _id: messageId });
+      if (message) {
+        if (message.status == "error") {
+          MessagesCollection.update(
+            { _id: messageId },
+            { $set: { status: "removed" }, $unset: { errorMessage: "" } }
+          );
+          resolve();
+        } else {
+          reject("Only error messages can be deleted");
+        }
+      } else {
+        reject(`Message with id ${messageId} not found`);
+      }
+    });
   }
 });
