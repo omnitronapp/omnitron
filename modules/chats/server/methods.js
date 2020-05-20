@@ -292,23 +292,21 @@ Meteor.methods({
     });
   },
   removeMessage(messageId) {
+    check(this.userId, String);
     check(messageId, String);
 
-    return new Promise((resolve, reject) => {
-      const message = MessagesCollection.findOne({ _id: messageId });
-      if (message) {
-        if (message.status == "error") {
-          MessagesCollection.update(
-            { _id: messageId },
-            { $set: { status: "removed" }, $unset: { errorMessage: "" } }
-          );
-          resolve();
-        } else {
-          reject("Only error messages can be deleted");
-        }
+    const message = MessagesCollection.findOne({ _id: messageId }, { fields: { status: 1 } });
+    if (message) {
+      if (message.status == "error") {
+        MessagesCollection.update(
+          { _id: messageId },
+          { $set: { status: "removed" }, $unset: { errorMessage: "" } }
+        );
       } else {
-        reject(`Message with id ${messageId} not found`);
+        throw new Error("Only error messages can be deleted");
       }
-    });
+    } else {
+      throw new Error(`Message with id ${messageId} not found`);
+    }
   }
 });
