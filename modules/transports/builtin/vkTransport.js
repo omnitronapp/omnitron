@@ -78,6 +78,10 @@ export class Transport extends EventEmitter {
     request(baseUrl + method + "?" + requestParams, callback);
   }
 
+  getResponseBody(bodyJsonString) {
+    const body = JSON.parse(bodyJsonString);
+    return body.response;
+  }
   configureHandlers() {
     if (this.handlersCreated) {
       return;
@@ -202,6 +206,11 @@ export class Transport extends EventEmitter {
               });
               reject();
             } else {
+              this.emit("message_id", {
+                internalMessageId: messageId,
+                channelMessageId: this.getResponseBody(body)
+              });
+
               this.emit("message_status", {
                 messageId: messageId,
                 status: "delivered"

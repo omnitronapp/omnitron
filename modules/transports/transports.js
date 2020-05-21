@@ -3,13 +3,13 @@ import { TransportsCollection } from "./collections";
 import { LogsCollection } from "../logs/collections";
 
 function writeLog(transport, type, text) {
-	LogsCollection.insert({
-		event: "transport",
-		transport,
-		type,
-		text,
-		createdAt: new Date()
-	});
+  LogsCollection.insert({
+    event: "transport",
+    transport,
+    type,
+    text,
+    createdAt: new Date()
+  });
 }
 
 export class Transports {
@@ -31,6 +31,13 @@ export class Transports {
       "message_status",
       Meteor.bindEnvironment(messageStatus => {
         Meteor.call("changeMessageStatus", messageStatus);
+      })
+    );
+
+    transportInstance.on(
+      "message_id",
+      Meteor.bindEnvironment(messageSid => {
+        Meteor.call("recordMessageId", messageSid);
       })
     );
 

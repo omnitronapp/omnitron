@@ -224,6 +224,10 @@ export class Transport extends EventEmitter {
           })
           .then(message => {
             console.log(message.sid);
+            this.emit("message_id", {
+              internalMessageId: messageId,
+              channelMessageId: message.sid
+            });
           })
           .catch(err => {
             console.error(err);

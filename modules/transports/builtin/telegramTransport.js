@@ -256,7 +256,11 @@ export class Transport extends EventEmitter {
     return new Promise((resolve, reject) => {
       if (this.bot) {
         return this.bot.telegram.sendMessage(chatId, message).then(
-          () => {
+          message => {
+            this.emit("message_id", {
+              internalMessageId: messageId,
+              channelMessageId: message.messageId
+            });
             this.emit("message_status", {
               messageId,
               status: "sent"
