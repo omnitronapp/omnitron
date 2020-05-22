@@ -20,9 +20,10 @@ static-html             # Define static page content in .html files
 react-meteor-data       # React higher-order component for reactively tracking Meteor data
 accounts-base@1.6.0
 fourseven:scss
-accounts-password@1.6.0
+accounts-password
 mikowals:batch-insert
 aldeed:collection2
 http@1.4.2
 xolvio:cleaner
 lmieulet:meteor-coverage
+alanning:roles

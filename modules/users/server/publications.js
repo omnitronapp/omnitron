@@ -17,3 +17,11 @@ Meteor.publish("users", function() {
 
   return Meteor.users.find({ active: { $ne: false } }, { fields: { services: 0 } });
 });
+
+Meteor.publish(null, function() {
+  if (this.userId) {
+    return Meteor.roleAssignment.find({ "user._id": this.userId });
+  } else {
+    this.ready();
+  }
+});
