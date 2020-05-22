@@ -13,7 +13,7 @@ Meteor.methods({
   receiveMessage({ parsedMessage, rawMessage }) {
     check(parsedMessage, Object);
     check(rawMessage, Object);
-
+    check(this.userId, String);
     let rawMessageId = "";
 
     try {
@@ -165,6 +165,7 @@ Meteor.methods({
   createMessage({ chatId, message }) {
     check(chatId, String);
     check(message, String);
+    check(this.userId, String);
 
     if (message === "") {
       return;
@@ -321,5 +322,17 @@ Meteor.methods({
     if (message.status == "error") {
       Transports.sendMessage(message.channel, message.chatId, messageId, message.message);
     }
+  },
+  recordMessageSid({ internalMessageId, channelMessageId }) {
+    check(internalMessageId, String);
+    check(channelMessageId, String);
+
+    const message = MessagesCollection.findOne({ _id: internalMessageId });
+
+    if (message)
+      return MessagesCollection.update(
+        { _id: internalMessageId },
+        { $set: { messageId: channelMessageId } }
+      );
   }
 });
