@@ -125,13 +125,46 @@ export class Transport extends EventEmitter {
     );
   }
 
-  sendMessage(chatId, message) {
+  sendMessage(chatId, messageId, message) {
     return new Promise((resolve, reject) => {
-      const serviceUrl = this.credentials.serviceUrl;
+      if (this.credentials) {
+        const serviceUrl = this.credentials.serviceUrl;
 
-      request.post(serviceUrl, { body: { chatId, message } }, () => {
-        resolve();
-      });
+        request.post(serviceUrl, { body: { chatId, message } }, (err, req) => {
+          if (err) {
+            this.emit("message_status", {
+              messageId,
+              status: "error",
+              errorMessage: err.message
+            });
+
+            reject(err.message);
+            return;
+          }
+
+          if (req.statusCode === 200) {
+            this.emit("message_status", {
+              messageId,
+              status: "delivered"
+            });
+            resolve();
+          } else {
+            this.emit("message_status", {
+              messageId,
+              status: "error",
+              errorMessage: `Server responded with ${req.statusCode} status code`
+            });
+            reject(`Server responded with ${req.statusCode} status code`);
+          }
+        });
+      } else {
+        this.emit("message_status", {
+          messageId,
+          status: "error",
+          errorMessage: "Transport is disabled"
+        });
+        reject("Transport is disabled");
+      }
     });
   }
 

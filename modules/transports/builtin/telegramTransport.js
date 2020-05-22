@@ -4,6 +4,7 @@ import url from "url";
 const Telegraf = require("telegraf");
 
 import { Rest } from "../../rest/server/";
+import { MessagesCollection, ChatsCollection } from "../../chats/collections";
 
 export class Transport extends EventEmitter {
   constructor() {
@@ -251,12 +252,39 @@ export class Transport extends EventEmitter {
     });
   }
 
-  sendMessage(chatId, message) {
+  sendMessage(chatId, messageId, message) {
     return new Promise((resolve, reject) => {
       if (this.bot) {
-        return this.bot.telegram.sendMessage(chatId, message).then(() => resolve(), () => reject());
+        return this.bot.telegram.sendMessage(chatId, message).then(
+          message => {
+            this.emit("message_id", {
+              internalMessageId: messageId,
+              channelMessageId: message.messageId
+            });
+            this.emit("message_status", {
+              messageId,
+              status: "sent"
+            });
+            resolve();
+          },
+          err => {
+            this.emit("message_status", {
+              messageId,
+              status: "error",
+              errorMessage: err.message
+            });
+
+            reject();
+          }
+        );
       } else {
-        reject("Bot is disabled");
+        this.emit("message_status", {
+          messageId,
+          status: "error",
+          errorMessage: "Transport is disabled"
+        });
+
+        reject("Transport is disabled");
       }
     });
   }
@@ -266,6 +294,7 @@ export class Transport extends EventEmitter {
     if (this.bot) {
       this.bot.stop(() => {
         console.error("telegram bot stopped");
+        this.bot = null;
       });
     }
   }

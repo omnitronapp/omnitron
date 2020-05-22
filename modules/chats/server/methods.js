@@ -121,12 +121,46 @@ Meteor.methods({
       }
     );
 
+    // update all inbound message statuses to `read` except for error messages
+    MessagesCollection.update(
+      {
+        chatId,
+        inbound: false,
+        status: {
+          $in: ["created", "sent", "delivered"]
+        },
+        createdAt: {
+          $lte: new Date()
+        }
+      },
+      {
+        $set: {
+          status: "read"
+        }
+      },
+      {
+        multi: true
+      }
+    );
+
     return {
       chatId,
       contactId,
       messageId,
       rawMessageId
     };
+  },
+  changeMessageStatus({ messageId, status, errorMessage }) {
+    MessagesCollection.update(
+      // update by internal or external message id
+      { $or: [{ _id: messageId }, { messageId }] },
+      {
+        $set: {
+          status,
+          errorMessage
+        }
+      }
+    );
   },
   createMessage({ chatId, message }) {
     check(chatId, String);
@@ -215,7 +249,7 @@ Meteor.methods({
       }
     });
 
-    Transports.sendMessage(lastUsedChannel, chatId, message);
+    Transports.sendMessage(lastUsedChannel, chatId, messageId, message);
   },
   setReadMessages: function(chatId) {
     check(this.userId, String);
@@ -256,5 +290,36 @@ Meteor.methods({
       username: user.username,
       userId: this.userId
     });
+  },
+  removeMessage(messageId) {
+    check(this.userId, String);
+    check(messageId, String);
+
+    const message = MessagesCollection.findOne({ _id: messageId }, { fields: { status: 1 } });
+    if (message) {
+      if (message.status == "error") {
+        MessagesCollection.update(
+          { _id: messageId },
+          { $set: { status: "removed" }, $unset: { errorMessage: "" } }
+        );
+      } else {
+        throw new Error("Only error messages can be deleted");
+      }
+    } else {
+      throw new Error(`Message with id ${messageId} not found`);
+    }
+  },
+  resendMessage(messageId) {
+    check(this.userId, String);
+    check(messageId, String);
+
+    const message = MessagesCollection.findOne(
+      { _id: messageId },
+      { fields: { status: 1, chatId: 1, channel: 1, message: 1 } }
+    );
+
+    if (message.status == "error") {
+      Transports.sendMessage(message.channel, message.chatId, messageId, message.message);
+    }
   }
 });

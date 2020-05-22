@@ -78,6 +78,10 @@ export class Transport extends EventEmitter {
     request(baseUrl + method + "?" + requestParams, callback);
   }
 
+  getResponseBody(bodyJsonString) {
+    const body = JSON.parse(bodyJsonString);
+    return body.response;
+  }
   configureHandlers() {
     if (this.handlersCreated) {
       return;
@@ -187,15 +191,42 @@ export class Transport extends EventEmitter {
     );
   }
 
-  sendMessage(chatId, message) {
+  sendMessage(chatId, messageId, message) {
     return new Promise((resolve, reject) => {
-      this.makeRequest("messages.send", { peer_id: chatId, message: message }, (err, res, body) => {
-        if (err) {
-          reject();
-        } else {
-          resolve();
-        }
-      });
+      if (this.credentials) {
+        this.makeRequest(
+          "messages.send",
+          { peer_id: chatId, message: message },
+          (err, res, body) => {
+            if (err) {
+              this.emit("message_status", {
+                messageId: messageId,
+                status: "error",
+                errorMessage: err.message
+              });
+              reject();
+            } else {
+              this.emit("message_id", {
+                internalMessageId: messageId,
+                channelMessageId: this.getResponseBody(body)
+              });
+
+              this.emit("message_status", {
+                messageId: messageId,
+                status: "delivered"
+              });
+              resolve();
+            }
+          }
+        );
+      } else {
+        this.emit("message_status", {
+          messageId: messageId,
+          status: "error",
+          errorMessage: "Transport is disabled"
+        });
+        reject();
+      }
     });
   }
 

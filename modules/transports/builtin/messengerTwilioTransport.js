@@ -74,7 +74,17 @@ export class Transport extends EventEmitter {
     const mainWebhook = this.webhookEndpoints().find(webhook => webhook.key === "webhook_url");
 
     Rest.post(statusWebhook.url, (req, res) => {
-      // TODO: Handle status message
+      if (req.body.MessageStatus == "failed")
+        this.emit("message_status", {
+          messageId: req.body.messageId,
+          status: "error",
+          errorMessage: req.body.ErrorMessage
+        });
+      else
+        this.emit("message_status", {
+          messageId: req.body.messageId,
+          status: req.body.MessageStatus
+        });
       res.send({});
     });
 
@@ -206,7 +216,7 @@ export class Transport extends EventEmitter {
     );
   }
 
-  sendMessage(chatId, message) {
+  sendMessage(chatId, messageId, message) {
     return new Promise((resolve, reject) => {
       if (this.client) {
         this.client.messages
@@ -215,13 +225,28 @@ export class Transport extends EventEmitter {
             from: this.credentials.from,
             to: chatId
           })
-          .then(
-            message => console.log(message.sid),
-            err => {
-              console.error(err);
-            }
-          )
+          .then(message => {
+            console.log(message.sid);
+            this.emit("message_id", {
+              internalMessageId: messageId,
+              channelMessageId: message.sid
+            });
+          })
+          .catch(err => {
+            console.error(err);
+            this.emit("message_status", {
+              messageId,
+              status: "error",
+              errorMessage: err.message
+            });
+          })
           .done(resolve);
+      } else {
+        this.emit("message_status", {
+          messageId,
+          status: "error",
+          errorMessage: "Transport is disabled"
+        });
       }
     });
   }

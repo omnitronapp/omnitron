@@ -156,6 +156,16 @@ export const MessageSchema = new SimpleSchema({
     },
     optional: true
   },
+  status: {
+    type: String,
+    optional: true,
+    defaultValue: "created",
+    allowedValues: ["created", "sent", "error", "delivered", "read", "removed"]
+  },
+  errorMessage: {
+    type: String,
+    optional: true
+  },
   inbound: {
     type: Boolean,
     defaultValue: false,
