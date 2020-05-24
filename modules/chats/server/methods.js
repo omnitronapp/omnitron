@@ -13,7 +13,7 @@ Meteor.methods({
   receiveMessage({ parsedMessage, rawMessage }) {
     check(parsedMessage, Object);
     check(rawMessage, Object);
-    check(this.userId, String);
+
     let rawMessageId = "";
 
     try {
@@ -327,12 +327,9 @@ Meteor.methods({
     check(internalMessageId, String);
     check(channelMessageId, String);
 
-    const message = MessagesCollection.findOne({ _id: internalMessageId });
-
-    if (message)
-      return MessagesCollection.update(
-        { _id: internalMessageId },
-        { $set: { messageId: channelMessageId } }
-      );
+    MessagesCollection.update(
+      { _id: internalMessageId },
+      { $set: { messageId: channelMessageId } }
+    );
   }
 });
