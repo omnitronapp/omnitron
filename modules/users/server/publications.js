@@ -10,7 +10,7 @@ Meteor.publish("currentUser", function() {
 });
 
 Meteor.publish("users", function() {
-  if (!this.userId) {
+  if (!Roles.userIsInRole(this.userId, "READ_USERS")) {
     this.ready();
     return;
   }
@@ -19,9 +19,10 @@ Meteor.publish("users", function() {
 });
 
 Meteor.publish(null, function() {
-  if (this.userId) {
-    return Meteor.roleAssignment.find({ "user._id": this.userId });
-  } else {
+  if (!this.userId) {
     this.ready();
+    return;
   }
+
+  return Meteor.roleAssignment.find({ "user._id": this.userId });
 });

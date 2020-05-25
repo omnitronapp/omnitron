@@ -9,6 +9,9 @@ Meteor.methods({
     check(this.userId, String);
     check(credentials, Object);
 
+    if (!Roles.userIsInRole(this.userId, "CHANGE_USERS"))
+      throw new Error("User doesn't have permission CHANGE_USERS");
+
     const user = Meteor.user();
 
     if (user.username !== credentials.username) {
@@ -18,8 +21,11 @@ Meteor.methods({
     Accounts.setPassword(Meteor.userId(), credentials.password, { logout: true });
   },
   removeUser(userIdToRemove) {
-    check(this.userId, String);
     check(userIdToRemove, String);
+    check(this.userId, String);
+
+    if (!Roles.userIsInRole(this.userId, "REMOVE_USERS"))
+      throw new Error("User doesn't have permission REMOVE_USERS");
 
     Meteor.users.update(
       { _id: userIdToRemove },
@@ -38,6 +44,9 @@ Meteor.methods({
     check(userIdToEdit, String);
     check(userProps, Object);
 
+    if (!Roles.userIsInRole(this.userId, "CHANGE_USERS"))
+      throw new Error("User doesn't have permission CHANGE_USERS");
+
     const user = Meteor.users.findOne({ _id: userIdToEdit });
 
     if (user.username !== userProps.username) {
@@ -50,6 +59,9 @@ Meteor.methods({
   addUser(userProps) {
     check(this.userId, String);
     check(userProps, Object);
+
+    if (!Roles.userIsInRole(this.userId, "ADD_USERS"))
+      throw new Error("User doesn't have permission ADD_USERS");
 
     const userId = Accounts.createUser({
       username: userProps.username,

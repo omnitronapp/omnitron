@@ -9,6 +9,9 @@ Meteor.methods({
     check(credentials, Object);
     check(enabled, Boolean);
 
+    if (!Roles.userIsInRole(this.userId, "CHANGE_TRANSPORTS"))
+      throw new Error("User doesn't have permission CHANGE_TRANSPORTS");
+
     const updateFields = {
       credentials,
       enabled

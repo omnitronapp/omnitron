@@ -151,6 +151,8 @@ Meteor.methods({
     };
   },
   changeMessageStatus({ messageId, status, errorMessage }) {
+    check(this.userId, String);
+
     MessagesCollection.update(
       // update by internal or external message id
       { $or: [{ _id: messageId }, { messageId }] },
@@ -165,7 +167,9 @@ Meteor.methods({
   createMessage({ chatId, message }) {
     check(chatId, String);
     check(message, String);
-    check(this.userId, String);
+
+    if (!Roles.userIsInRole(this.userId, "SEND_MESSAGES"))
+      throw new Error("User doesn't have permission SEND_MESSAGES");
 
     if (message === "") {
       return;
@@ -253,7 +257,6 @@ Meteor.methods({
     Transports.sendMessage(lastUsedChannel, chatId, messageId, message);
   },
   setReadMessages: function(chatId) {
-    check(this.userId, String);
     check(chatId, String);
 
     const userId = this.userId;
@@ -293,8 +296,10 @@ Meteor.methods({
     });
   },
   removeMessage(messageId) {
-    check(this.userId, String);
     check(messageId, String);
+
+    if (!Roles.userIsInRole(this.userId, "REMOVE_MESSAGES"))
+      throw new Error("User doesn't have permission REMOVE_MESSAGES");
 
     const message = MessagesCollection.findOne({ _id: messageId }, { fields: { status: 1 } });
     if (message) {
@@ -311,8 +316,10 @@ Meteor.methods({
     }
   },
   resendMessage(messageId) {
-    check(this.userId, String);
     check(messageId, String);
+
+    if (!Roles.userIsInRole(this.userId, "SEND_MESSAGES"))
+      throw new Error("User doesn't have permission SEND_MESSAGES");
 
     const message = MessagesCollection.findOne(
       { _id: messageId },

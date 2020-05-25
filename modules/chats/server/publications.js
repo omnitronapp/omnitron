@@ -8,7 +8,7 @@ Meteor.publish("chats", function(name, options) {
   check(name, Match.Maybe(String));
   check(options, Object);
 
-  if (!this.userId) {
+  if (!Roles.userIsInRole(this.userId, "READ_MESSAGES")) {
     return this.ready();
   }
 
@@ -26,7 +26,7 @@ Meteor.publish("chats", function(name, options) {
 Meteor.publish("messages", function({ chatId, limit }) {
   check(limit, Number);
 
-  if (!this.userId || !chatId) {
+  if (!Roles.userIsInRole(this.userId, "READ_MESSAGES") || !chatId) {
     return this.ready();
   }
   return MessagesCollection.find({ chatId }, { sort: { createdAt: -1 }, limit });

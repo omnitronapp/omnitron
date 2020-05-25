@@ -4,7 +4,10 @@ import { check } from "meteor/check";
 import { TransportsCollection } from "../collections";
 
 Meteor.publish("transports", function() {
-  check(this.userId, String);
+  if (!Roles.userIsInRole(this.userId, "READ_TRANSPORTS")) {
+    this.ready();
+    return;
+  }
 
   return TransportsCollection.find();
 });

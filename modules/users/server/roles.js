@@ -4,10 +4,12 @@ export function initializeRoles(params) {
   const childRoles = [
     "READ_MESSAGES",
     "SEND_MESSAGES",
+    "REMOVE_MESSAGES",
     "READ_SETTINGS",
     "CHANGE_SETTINGS",
-    "LIST_TRANSPORTS",
+    "READ_TRANSPORTS",
     "CHANGE_TRANSPORTS",
+    "ADD_USERS",
     "LIST_USERS",
     "CHANGE_USERS"
   ];
