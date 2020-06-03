@@ -226,7 +226,6 @@ export class Transport extends EventEmitter {
             to: chatId
           })
           .then(message => {
-            console.log(message.sid);
             this.emit("message_id", {
               internalMessageId: messageId,
               channelMessageId: message.sid

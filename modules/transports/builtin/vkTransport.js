@@ -80,7 +80,7 @@ export class Transport extends EventEmitter {
 
   getResponseBody(bodyJsonString) {
     const body = JSON.parse(bodyJsonString);
-    return body.response;
+    return body.response.toString();
   }
   configureHandlers() {
     if (this.handlersCreated) {

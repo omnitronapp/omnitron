@@ -13,7 +13,7 @@ Meteor.methods({
   receiveMessage({ parsedMessage, rawMessage }) {
     check(parsedMessage, Object);
     check(rawMessage, Object);
-    check(this.userId, String);
+
     let rawMessageId = "";
 
     try {
@@ -151,7 +151,7 @@ Meteor.methods({
     };
   },
   changeMessageStatus({ messageId, status, errorMessage }) {
-    check(this.userId, String);
+    check(messageId, String);
 
     MessagesCollection.update(
       // update by internal or external message id
@@ -330,16 +330,18 @@ Meteor.methods({
       Transports.sendMessage(message.channel, message.chatId, messageId, message.message);
     }
   },
-  recordMessageSid({ internalMessageId, channelMessageId }) {
+  recordMessageId({ internalMessageId, channelMessageId }) {
     check(internalMessageId, String);
     check(channelMessageId, String);
 
-    const message = MessagesCollection.findOne({ _id: internalMessageId });
+    let messageId;
 
-    if (message)
-      return MessagesCollection.update(
-        { _id: internalMessageId },
-        { $set: { messageId: channelMessageId } }
-      );
+    if (typeof channelMessageId === "number") messageId = channelMessageId.toString();
+    else messageId = channelMessageId;
+
+    MessagesCollection.update(
+      { _id: internalMessageId },
+      { $set: { messageId: channelMessageId } }
+    );
   }
 });
