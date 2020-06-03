@@ -72,5 +72,30 @@ Meteor.methods({
     distributorInterface.userDataChanged();
 
     return userId;
+  },
+  setRole(userId, roleId) {
+    check(userId, String);
+    check(roleId, String);
+
+    Roles.addUsersToRoles(userId, roleId);
+  },
+
+  createNewRole(roleName, roles) {
+    check(roleName, String);
+    check(roles, [String]);
+
+    try {
+      Roles.createRole(roleName);
+    } catch (e) {
+      throw e;
+    }
+
+    roles.forEach(role => {
+      try {
+        Roles.addRolesToParent(role, roleName);
+      } catch (e) {
+        throw e;
+      }
+    });
   }
 });
