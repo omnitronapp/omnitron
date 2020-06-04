@@ -29,7 +29,10 @@ Meteor.publish("messages", function({ chatId, limit }) {
   if (!Roles.userIsInRole(this.userId, "READ_MESSAGES") || !chatId) {
     return this.ready();
   }
-  return MessagesCollection.find({ chatId }, { sort: { createdAt: -1 }, limit });
+  return MessagesCollection.find(
+    { chatId, status: { $ne: "removed" } },
+    { sort: { createdAt: -1 }, limit }
+  );
 });
 
 Meteor.publish("chatNotes", function(chatId) {

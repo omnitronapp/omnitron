@@ -1,9 +1,16 @@
+import { Meteor } from "meteor/meteor";
 import React from "react";
 import moment from "moment";
+import classnames from "classnames";
+import { toast } from "react-toastify";
 
 import ListItem from "@material-ui/core/ListItem";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+
+import DeleteIcon from "@material-ui/icons/Delete";
+import ReplayIcon from "@material-ui/icons/Replay";
 
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -12,6 +19,8 @@ import ImageRenderer from "./messageTypes/ImageRenderer";
 import DocumentRenderer from "./messageTypes/DocumentRenderer";
 import AudioRenderer from "./messageTypes/AudioRenderer";
 import VideoRenderer from "./messageTypes/VideoRenderer";
+
+import MessageStatus from "./MessageStatus";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,6 +37,12 @@ const useStyles = makeStyles(theme => ({
     maxWidth: theme.spacing(50),
     position: "relative",
     backgroundColor: "#e3f2fd"
+  },
+  cardErrorMessage: {
+    backgroundColor: theme.palette.error.light
+  },
+  chunkErrorMessage: {
+    borderColor: `transparent transparent transparent ${theme.palette.error.light} !important`
   },
   chunkInbound: {
     position: "absolute",
@@ -78,6 +93,33 @@ export default function ChatMessages({ message }) {
 
   const MessageRenderer = getMessageRenderer(message.type);
 
+  const cardClassNames = classnames(
+    inbound ? classes.cardInbound : classes.cardOutbound,
+    message.status === "error" ? classes.cardErrorMessage : null
+  );
+  const chunkClassNames = classnames(
+    inbound ? classes.chunkInbound : classes.chunkOutbound,
+    message.status === "error" ? classes.chunkErrorMessage : null
+  );
+
+  function onResendMessage() {
+    Meteor.call("resendMessage", message._id, err => {
+      if (err) {
+        return toast.success(`Failed to resent the message ${err.message}`);
+      }
+      toast.success("Message was resent");
+    });
+  }
+
+  function onRemoveMessage() {
+    Meteor.call("removeMessage", message._id, err => {
+      if (err) {
+        return toast.success(`Failed to remove the message ${err.message}`);
+      }
+      toast.success("Message was removed");
+    });
+  }
+
   return (
     <Grid
       container
@@ -87,8 +129,8 @@ export default function ChatMessages({ message }) {
       alignItems="flex-start"
       justify={inbound ? "flex-start" : "flex-end"}
     >
-      <div className={inbound ? classes.cardInbound : classes.cardOutbound}>
-        <div className={inbound ? classes.chunkInbound : classes.chunkOutbound} />
+      <div className={cardClassNames}>
+        <div className={chunkClassNames} />
         <ListItem className={classes.item}>
           <Grid item xs>
             <MessageRenderer message={message} />
@@ -98,6 +140,21 @@ export default function ChatMessages({ message }) {
               {moment(message.createdAt).format("HH:mm:ss")}
             </Typography>
           </Grid>
+          {!inbound && message.status !== "error" ? (
+            <Grid item className={classes.time}>
+              <MessageStatus status={message.status} />
+            </Grid>
+          ) : null}
+          {message.status === "error" ? (
+            <>
+              <IconButton aria-label="Resend Message" color="primary" onClick={onResendMessage}>
+                <ReplayIcon />
+              </IconButton>
+              <IconButton aria-label="Remove Message" color="primary" onClick={onRemoveMessage}>
+                <DeleteIcon />
+              </IconButton>
+            </>
+          ) : null}
         </ListItem>
       </div>
     </Grid>
