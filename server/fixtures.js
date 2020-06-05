@@ -21,8 +21,8 @@ function randomNumberInRange(min = 1, max = 10000000) {
 
 if (Meteor.users.find().count() === 0) {
   Accounts.createUser({ username: "omnitron", password: "omnitron" });
-  Accounts.createUser({ username: "omnitron2", password: "omnitron2" });
-
+  const agent = Accounts.createUser({ username: "omnitron2", password: "omnitron2" });
+  Roles.addUsersToRoles(agent, "agent");
   const contacts = [...new Array(5)].map(contact => {
     return {
       name: randomString(),

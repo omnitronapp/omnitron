@@ -110,7 +110,11 @@ function TransportTabPanel(props) {
       </Typography>
     );
   } else {
-    return null;
+    return (
+      <Container>
+        <div>You don't have permission</div>
+      </Container>
+    );
   }
 }
 
