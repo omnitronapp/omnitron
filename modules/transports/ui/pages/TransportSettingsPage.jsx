@@ -64,50 +64,54 @@ function TransportTabPanel(props) {
     );
   }
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-    >
-      <Container>
-        <Typography>
-          To properly configure {transport.channel} channel go to:{" "}
-          <a href={transport.linkToInstructions} target="_blank">
-            {transport.channel} instructions
-          </a>
-        </Typography>
-        <TransportCredentialsForm
-          transport={transport}
-          credentials={credentials}
-          onChange={onCredentialChange}
-        />
-        <TransportWebhooksInformation webhooks={transport.webhookEndpoints} />
-        <FormControlLabel
-          control={<Checkbox checked={enabled} value={"Enabled"} />}
-          label="Enabled"
-          fullWidth
-          onChange={onTransportStatusChange}
-        />
+  if (Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS")) {
+    return (
+      <Typography
+        component="div"
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+      >
+        <Container>
+          <Typography>
+            To properly configure {transport.channel} channel go to:{" "}
+            <a href={transport.linkToInstructions} target="_blank">
+              {transport.channel} instructions
+            </a>
+          </Typography>
+          <TransportCredentialsForm
+            transport={transport}
+            credentials={credentials}
+            onChange={onCredentialChange}
+          />
+          <TransportWebhooksInformation webhooks={transport.webhookEndpoints} />
+          <FormControlLabel
+            control={<Checkbox checked={enabled} value={"Enabled"} />}
+            label="Enabled"
+            fullWidth
+            onChange={onTransportStatusChange}
+          />
 
-        <Typography color="error">{transport.errorMessage}</Typography>
+          <Typography color="error">{transport.errorMessage}</Typography>
 
-        <Typography color={transport.enabled ? "primary" : "error"}>
-          Status: {transport.enabled ? "Enabled" : "Disabled"}
-        </Typography>
+          <Typography color={transport.enabled ? "primary" : "error"}>
+            Status: {transport.enabled ? "Enabled" : "Disabled"}
+          </Typography>
 
-        <div>
-          <Button color="primary" onClick={onSave} variant="contained">
-            Save
-          </Button>
-        </div>
+          <div>
+            <Button color="primary" onClick={onSave} variant="contained">
+              Save
+            </Button>
+          </div>
 
-        <LogsList filter={{ event: "transport", transport: transport.name }} />
-      </Container>
-    </Typography>
-  );
+          <LogsList filter={{ event: "transport", transport: transport.name }} />
+        </Container>
+      </Typography>
+    );
+  } else {
+    return null;
+  }
 }
 
 function getTransportTabPanels(transports, currentTab) {

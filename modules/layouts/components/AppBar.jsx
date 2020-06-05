@@ -49,7 +49,6 @@ function TopAppBar({ history }) {
     history.push("/profile");
     setAnchorEl(null);
   }
-
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
@@ -61,9 +60,11 @@ function TopAppBar({ history }) {
         <Link to="/chats" className={classes.appBarMenuLinks}>
           <Button color="inherit">Chats</Button>
         </Link>
-        <Link to="/transports" className={classes.appBarMenuLinks}>
-          <Button color="inherit">Transports</Button>
-        </Link>
+        {Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS") ? (
+          <Link to="/transports" className={classes.appBarMenuLinks}>
+            <Button color="inherit">Transports</Button>
+          </Link>
+        ) : null}
         <Link to="/users" className={classes.appBarMenuLinks}>
           <Button color="inherit">Users</Button>
         </Link>
