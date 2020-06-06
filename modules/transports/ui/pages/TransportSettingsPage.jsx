@@ -63,59 +63,50 @@ function TransportTabPanel(props) {
       }
     );
   }
-
-  if (Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS")) {
-    return (
-      <Typography
-        component="div"
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-      >
-        <Container>
-          <Typography>
-            To properly configure {transport.channel} channel go to:{" "}
-            <a href={transport.linkToInstructions} target="_blank">
-              {transport.channel} instructions
-            </a>
-          </Typography>
-          <TransportCredentialsForm
-            transport={transport}
-            credentials={credentials}
-            onChange={onCredentialChange}
-          />
-          <TransportWebhooksInformation webhooks={transport.webhookEndpoints} />
-          <FormControlLabel
-            control={<Checkbox checked={enabled} value={"Enabled"} />}
-            label="Enabled"
-            fullWidth
-            onChange={onTransportStatusChange}
-          />
-
-          <Typography color="error">{transport.errorMessage}</Typography>
-
-          <Typography color={transport.enabled ? "primary" : "error"}>
-            Status: {transport.enabled ? "Enabled" : "Disabled"}
-          </Typography>
-
-          <div>
-            <Button color="primary" onClick={onSave} variant="contained">
-              Save
-            </Button>
-          </div>
-
-          <LogsList filter={{ event: "transport", transport: transport.name }} />
-        </Container>
-      </Typography>
-    );
-  } else {
-    return (
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+    >
       <Container>
-        <div>You don't have permission</div>
+        <Typography>
+          To properly configure {transport.channel} channel go to:{" "}
+          <a href={transport.linkToInstructions} target="_blank">
+            {transport.channel} instructions
+          </a>
+        </Typography>
+        <TransportCredentialsForm
+          transport={transport}
+          credentials={credentials}
+          onChange={onCredentialChange}
+        />
+        <TransportWebhooksInformation webhooks={transport.webhookEndpoints} />
+        <FormControlLabel
+          control={<Checkbox checked={enabled} value={"Enabled"} />}
+          label="Enabled"
+          fullWidth
+          onChange={onTransportStatusChange}
+        />
+
+        <Typography color="error">{transport.errorMessage}</Typography>
+
+        <Typography color={transport.enabled ? "primary" : "error"}>
+          Status: {transport.enabled ? "Enabled" : "Disabled"}
+        </Typography>
+
+        <div>
+          <Button color="primary" onClick={onSave} variant="contained">
+            Save
+          </Button>
+        </div>
+
+        <LogsList filter={{ event: "transport", transport: transport.name }} />
       </Container>
-    );
-  }
+    </Typography>
+  );
 }
 
 function getTransportTabPanels(transports, currentTab) {
@@ -141,26 +132,29 @@ function TransportSettingsPage({ ready, transports }) {
   function handleChange(event, newTabIndex) {
     setCurrentTab(newTabIndex);
   }
+  if (Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS")) {
+    return (
+      <Container>
+        <Grid>
+          <Grid item xs={12}>
+            <Paper>
+              <Tabs
+                value={currentTab}
+                onChange={handleChange}
+                aria-label="Channel transports configuration"
+              >
+                {getTransportTabs(transports)}
+              </Tabs>
 
-  return (
-    <Container>
-      <Grid>
-        <Grid item xs={12}>
-          <Paper>
-            <Tabs
-              value={currentTab}
-              onChange={handleChange}
-              aria-label="Channel transports configuration"
-            >
-              {getTransportTabs(transports)}
-            </Tabs>
-
-            {getTransportTabPanels(transports, currentTab)}
-          </Paper>
+              {getTransportTabPanels(transports, currentTab)}
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
-  );
+      </Container>
+    );
+  } else {
+    return <div>You don't have permission to access this page</div>;
+  }
 }
 
 export default withTracker(() => {
