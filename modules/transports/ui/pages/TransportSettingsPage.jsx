@@ -127,34 +127,33 @@ function TransportSettingsPage({ ready, transports }) {
     return <LoadingScreen />;
   }
 
+  if (!Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS")) {
+    return <div>You don't have permission to access this page</div>;
+  }
   const [currentTab, setCurrentTab] = useState(0);
 
   function handleChange(event, newTabIndex) {
     setCurrentTab(newTabIndex);
   }
-  if (Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS")) {
-    return (
-      <Container>
-        <Grid>
-          <Grid item xs={12}>
-            <Paper>
-              <Tabs
-                value={currentTab}
-                onChange={handleChange}
-                aria-label="Channel transports configuration"
-              >
-                {getTransportTabs(transports)}
-              </Tabs>
+  return (
+    <Container>
+      <Grid>
+        <Grid item xs={12}>
+          <Paper>
+            <Tabs
+              value={currentTab}
+              onChange={handleChange}
+              aria-label="Channel transports configuration"
+            >
+              {getTransportTabs(transports)}
+            </Tabs>
 
-              {getTransportTabPanels(transports, currentTab)}
-            </Paper>
-          </Grid>
+            {getTransportTabPanels(transports, currentTab)}
+          </Paper>
         </Grid>
-      </Container>
-    );
-  } else {
-    return <div>You don't have permission to access this page</div>;
-  }
+      </Grid>
+    </Container>
+  );
 }
 
 export default withTracker(() => {

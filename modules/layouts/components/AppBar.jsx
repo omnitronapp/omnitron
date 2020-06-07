@@ -49,6 +49,31 @@ function TopAppBar({ history }) {
     history.push("/profile");
     setAnchorEl(null);
   }
+
+  function UsersLink() {
+    if (Roles.userIsInRole(Meteor.userId(), "LIST_USERS")) {
+      return (
+        <Link to="/users" className={classes.appBarMenuLinks}>
+          <Button color="inherit">Users</Button>
+        </Link>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  function TransportsLink() {
+    if (Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS")) {
+      return (
+        <Link to="/transports" className={classes.appBarMenuLinks}>
+          <Button color="inherit">Transports</Button>
+        </Link>
+      );
+    } else {
+      return null;
+    }
+  }
+
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
@@ -60,14 +85,8 @@ function TopAppBar({ history }) {
         <Link to="/chats" className={classes.appBarMenuLinks}>
           <Button color="inherit">Chats</Button>
         </Link>
-        {Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS") ? (
-          <Link to="/transports" className={classes.appBarMenuLinks}>
-            <Button color="inherit">Transports</Button>
-          </Link>
-        ) : null}
-        <Link to="/users" className={classes.appBarMenuLinks}>
-          <Button color="inherit">Users</Button>
-        </Link>
+        <TransportsLink />
+        <UsersLink />
         <Link to="/distribution" className={classes.appBarMenuLinks}>
           <Button color="inherit">Distribution</Button>
         </Link>

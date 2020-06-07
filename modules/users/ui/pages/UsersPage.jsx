@@ -31,6 +31,10 @@ const useStyles = makeStyles({
 });
 
 function UsersPage({ ready, users }) {
+  if (!Roles.userIsInRole(Meteor.userId(), "LIST_USERS")) {
+    return <div>You don't have permission to access this page</div>;
+  }
+
   const classes = useStyles();
 
   const [removeUser, setRemoveUser] = React.useState();
@@ -92,6 +96,43 @@ function UsersPage({ ready, users }) {
     }
   }
 
+  function EditButton() {
+    if (Roles.userIsInRole(Meteor.userId(), "EDIT_USERS")) {
+      return (
+        <IconButton
+          edge="end"
+          aria-label="edit"
+          onClick={() => {
+            setShowAddEditUserModal(true);
+            setEditUser(user);
+          }}
+        >
+          <EditIcon />
+        </IconButton>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  function DeleteButton() {
+    if (Roles.userIsInRole(Meteor.userId(), "EDIT_USERS")) {
+      return (
+        <IconButton
+          edge="end"
+          aria-label="remove"
+          onClick={() => {
+            setRemoveUser(user);
+          }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      );
+    } else {
+      return null;
+    }
+  }
+
   const usersList = users.map(user => {
     return (
       <ListItem key={user._id}>
@@ -100,25 +141,8 @@ function UsersPage({ ready, users }) {
         </ListItemAvatar>
         <ListItemText primary={user.username} />
         <ListItemSecondaryAction>
-          <IconButton
-            edge="end"
-            aria-label="edit"
-            onClick={() => {
-              setShowAddEditUserModal(true);
-              setEditUser(user);
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            edge="end"
-            aria-label="remove"
-            onClick={() => {
-              setRemoveUser(user);
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <EditButton />
+          <DeleteButton />
         </ListItemSecondaryAction>
       </ListItem>
     );
@@ -137,6 +161,7 @@ function UsersPage({ ready, users }) {
             setEditUser(undefined);
             setShowAddEditUserModal(true);
           }}
+          disabled={!Roles.userIsInRole(Meteor.userId(), "ADD_USERS")}
         >
           Add user
         </Button>
