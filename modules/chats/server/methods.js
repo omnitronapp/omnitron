@@ -321,6 +321,8 @@ Meteor.methods({
 
     if (message.status == "error") {
       Transports.sendMessage(message.channel, message.chatId, messageId, message.message);
+    } else {
+      throw new Exception("Only error messages can be resent");
     }
   },
   recordMessageSid({ internalMessageId, channelMessageId }) {
