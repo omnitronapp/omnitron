@@ -17,6 +17,9 @@ import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
 import TransportWebhooksInformation from "./TransportWebhooksInformation";
 import LogsList from "../../../logs/ui/components/LogsList";
+import UsersPage from "../../../users/ui/pages/UsersPage";
+
+import { PagePermissions } from "../../../users/ui/components/PagePermissions";
 
 function a11yProps(index) {
   return {
@@ -127,9 +130,6 @@ function TransportSettingsPage({ ready, transports }) {
     return <LoadingScreen />;
   }
 
-  if (!Roles.userIsInRole(Meteor.userId(), "READ_TRANSPORTS")) {
-    return <div>You don't have permission to access this page</div>;
-  }
   const [currentTab, setCurrentTab] = useState(0);
 
   function handleChange(event, newTabIndex) {
@@ -156,6 +156,8 @@ function TransportSettingsPage({ ready, transports }) {
   );
 }
 
+const PageWithPermissions = PagePermissions(UsersPage, "READ_TRANSPORTS");
+
 export default withTracker(() => {
   const subHandler = Meteor.subscribe("transports");
 
@@ -164,4 +166,4 @@ export default withTracker(() => {
     ready: subHandler.ready(),
     transports
   };
-})(TransportSettingsPage);
+})(PageWithPermissions);

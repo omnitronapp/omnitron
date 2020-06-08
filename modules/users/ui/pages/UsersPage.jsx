@@ -22,6 +22,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import EditUserModal from "../components/AddEditUserModal";
 import RemoveUserModal from "../components/RemoveUserModal";
 import LoadingBar from "../../../layouts/components/LoadingBar";
+import { PermissionHoc } from "../components/PermissionHoc";
+import { PagePermissions } from "../components/PagePermissions";
 
 const useStyles = makeStyles({
   paper: {
@@ -96,43 +98,6 @@ function UsersPage({ ready, users }) {
     }
   }
 
-  function EditButton() {
-    if (Roles.userIsInRole(Meteor.userId(), "EDIT_USERS")) {
-      return (
-        <IconButton
-          edge="end"
-          aria-label="edit"
-          onClick={() => {
-            setShowAddEditUserModal(true);
-            setEditUser(user);
-          }}
-        >
-          <EditIcon />
-        </IconButton>
-      );
-    } else {
-      return null;
-    }
-  }
-
-  function DeleteButton() {
-    if (Roles.userIsInRole(Meteor.userId(), "EDIT_USERS")) {
-      return (
-        <IconButton
-          edge="end"
-          aria-label="remove"
-          onClick={() => {
-            setRemoveUser(user);
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      );
-    } else {
-      return null;
-    }
-  }
-
   const usersList = users.map(user => {
     return (
       <ListItem key={user._id}>
@@ -141,8 +106,29 @@ function UsersPage({ ready, users }) {
         </ListItemAvatar>
         <ListItemText primary={user.username} />
         <ListItemSecondaryAction>
-          <EditButton />
-          <DeleteButton />
+          <PermissionHoc permission="EDIT_USERS">
+            <IconButton
+              edge="end"
+              aria-label="edit"
+              onClick={() => {
+                setShowAddEditUserModal(true);
+                setEditUser(user);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </PermissionHoc>
+          <PermissionHoc permission="EDIT_USERS">
+            <IconButton
+              edge="end"
+              aria-label="remove"
+              onClick={() => {
+                setRemoveUser(user);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </PermissionHoc>
         </ListItemSecondaryAction>
       </ListItem>
     );
@@ -183,11 +169,13 @@ function UsersPage({ ready, users }) {
   );
 }
 
+const PageWithPermissions = PagePermissions(UsersPage, "LIST_USERS");
+
 export default withTracker(() => {
   const subHandler = Meteor.subscribe("users");
-
+  // (UsersPage, "LIST_USERS")
   return {
     ready: subHandler.ready(),
     users: Meteor.users.find().fetch()
   };
-})(UsersPage);
+})(PageWithPermissions);
