@@ -177,6 +177,13 @@ Meteor.methods({
 
     const userId = this.userId;
 
+    const chat = ChatsCollection.findOne(
+      { _id: chatId },
+      { fields: { messagesCount: 1, readMessages: 1 } }
+    );
+    if (!chat) {
+      throw new Error("Chat not found");
+    }
     const lastMessage = MessagesCollection.findOne(
       {
         chatId
@@ -197,10 +204,6 @@ Meteor.methods({
     });
 
     //add readMessages
-    const chat = ChatsCollection.findOne(
-      { _id: chatId },
-      { fields: { messagesCount: 1, readMessages: 1 } }
-    );
 
     let { readMessages = [], messagesCount } = chat;
 
@@ -266,6 +269,9 @@ Meteor.methods({
       { fields: { messagesCount: 1, readMessages: 1 } }
     );
 
+    if (!chat) {
+      throw new Error("Chat not found");
+    }
     let { readMessages = [], messagesCount = 0 } = chat;
 
     const findUser = readMessages.findIndex(item => item.userId === userId);
@@ -285,6 +291,12 @@ Meteor.methods({
     check(chatId, String);
     check(chatNote, String);
     check(this.userId, String);
+
+    const chat = ChatsCollection.findOne({ _id: chatId });
+
+    if (!chat) {
+      throw new Error("Chat not found");
+    }
 
     const user = Meteor.user();
 
@@ -329,12 +341,18 @@ Meteor.methods({
     if (message.status == "error") {
       Transports.sendMessage(message.channel, message.chatId, messageId, message.message);
     } else {
-      throw new Exception("Only error messages can be resent");
+      throw new Error("Only error messages can be resent");
     }
   },
   recordMessageId({ internalMessageId, channelMessageId }) {
     check(internalMessageId, String);
     check(channelMessageId, String);
+
+    const message = MessagesCollection.findOne({ _id: internalMessageId }, { fields: { _id: 1 } });
+
+    if (!message) {
+      throw new Error(`Message with id ${internalMessageId} not found`);
+    }
 
     let messageId;
 

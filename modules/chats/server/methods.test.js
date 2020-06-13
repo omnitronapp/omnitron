@@ -2,51 +2,22 @@ import { Meteor } from "meteor/meteor";
 import { Random } from "meteor/random";
 import { resetDatabase } from "meteor/xolvio:cleaner";
 
-import sinon from "sinon";
+import sinon, { mock } from "sinon";
 import { expect } from "chai";
-import { mockUser } from "../../../server/testData";
+import { mockUser, mockMessage, mockChat, mockUserWithRole } from "../../../server/testData";
 
 import { Transports } from "../../transports";
 import { ChatNotesCollection, MessagesCollection } from "../collections";
 import "./methods";
 
-describe("saveChatNote() method test", function() {
-  before(function() {
+import { initializeRoles } from "../../users/server/roles";
+
+describe("changeMessageStatus() method test", () => {
+  beforeEach(() => {
     resetDatabase();
   });
 
-  it("should insert new chat note", function() {
-    const userId = mockUser();
-    const context = {
-      userId
-    };
-
-    const { saveChatNote } = Meteor.server.method_handlers;
-
-    expect(ChatNotesCollection.find().count()).to.eq(0);
-
-    const args = {
-      chatId: Random.id(),
-      chatNote: "My chat note"
-    };
-
-    saveChatNote.call(context, args);
-
-    expect(ChatNotesCollection.find().count()).to.eq(1);
-
-    const chatNote = ChatNotesCollection.findOne();
-    expect(chatNote.chatId).to.eq(args.chatId);
-    expect(chatNote.text).to.eq(args.chatNote);
-    expect(chatNote.userId).to.eq(userId);
-  });
-});
-
-describe("changeMessageStatus() method test", function() {
-  before(function() {
-    resetDatabase();
-  });
-
-  it("should change message status", function() {
+  it("should change message status", () => {
     const messageId = MessagesCollection.insert({
       chatId: Random.id(),
       channel: "test"
@@ -64,28 +35,207 @@ describe("changeMessageStatus() method test", function() {
   });
 });
 
-describe("removeMessage() method test", function() {
+describe("createMessage() method test", () => {
+  let permittedUserId;
+  let unpermittedUserId;
+  let chatId;
+
+  beforeEach(() => {
+    resetDatabase();
+    initializeRoles();
+
+    permittedUserId = mockUserWithRole("SEND_MESSAGES");
+    unpermittedUserId = mockUser();
+    chatId = mockChat();
+
+    sinon.replace(Transports, "sendMessage", sinon.fake());
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it("should throw an error if user doesn't have permission", () => {
+    const { createMessage } = Meteor.server.method_handlers;
+
+    const args = { chatId: Random.id(), message: "Test Message" };
+    const invocation = { userId: unpermittedUserId };
+
+    expect(() => {
+      createMessage.call(invocation, args);
+    }).to.throw(Error, "User doesn't have permission SEND_MESSAGES");
+  });
+
+  it("should do nothing if message is empty", () => {
+    const { createMessage } = Meteor.server.method_handlers;
+
+    const invocation = { userId: permittedUserId };
+    const args = { chatId, message: "" };
+
+    createMessage.call(invocation, args);
+
+    expect(Transports.sendMessage.calledWith(((chatId = chatId), (message = "")))).to.be.false;
+  });
+
+  it("should send message", () => {
+    const { createMessage } = Meteor.server.method_handlers;
+
+    const message = "test message";
+
+    const invocation = { userId: permittedUserId };
+    const args = { chatId, message };
+
+    createMessage.call(invocation, args);
+
+    const messageId = MessagesCollection.findOne(
+      {
+        message
+      },
+      {
+        fields: {
+          _id: 1
+        }
+      }
+    )._id;
+
+    expect(Transports.sendMessage.calledWith("omnitron", chatId, messageId, message)).to.be.true;
+  });
+
+  it("should throw an error if chat not found", () => {
+    chatId = Random.id();
+    message = "test message";
+
+    const { createMessage } = Meteor.server.method_handlers;
+
+    const invocation = { userId: permittedUserId };
+    const args = { chatId, message };
+
+    expect(() => {
+      createMessage.call(invocation, args);
+    }).to.throw(Error, "Chat not found");
+  });
+});
+
+describe("setReadMessages() method test", () => {
   let userId;
-  before(function() {
+  let chatId;
+  beforeEach(() => {
     resetDatabase();
 
     userId = mockUser();
+    chatId = mockChat();
   });
 
-  it("should throw error if message is not found", function() {
+  it("should throw an error if chat not found", () => {
+    const { setReadMessages } = Meteor.server.method_handlers;
+
+    const invocation = { userId };
+    chatId = Random.id();
+
+    expect(() => {
+      setReadMessages.call(invocation, chatId);
+    }).to.throw(Error, "Chat not found");
+  });
+
+  it("should return WriteResult when updated", () => {
+    const { setReadMessages } = Meteor.server.method_handlers;
+
+    const invocation = { userId };
+
+    const writeResult = setReadMessages.call(invocation, chatId);
+
+    expect(writeResult).to.eq(1);
+  });
+});
+
+describe("saveChatNote() method test", () => {
+  let userId;
+  let chatId;
+  beforeEach(() => {
+    resetDatabase();
+    userId = mockUser();
+    chatId = mockChat();
+  });
+
+  it("should insert new chat note", () => {
+    const context = {
+      userId
+    };
+
+    const { saveChatNote } = Meteor.server.method_handlers;
+
+    expect(ChatNotesCollection.find().count()).to.eq(0);
+
+    const args = {
+      chatId,
+      chatNote: "My chat note"
+    };
+    saveChatNote.call(context, args);
+
+    expect(ChatNotesCollection.find().count()).to.eq(1);
+
+    const chatNote = ChatNotesCollection.findOne();
+    expect(chatNote.chatId).to.eq(args.chatId);
+    expect(chatNote.text).to.eq(args.chatNote);
+    expect(chatNote.userId).to.eq(userId);
+  });
+
+  it("should throw an error if chat not found", () => {
+    const context = {
+      userId
+    };
+
+    const { saveChatNote } = Meteor.server.method_handlers;
+
+    expect(ChatNotesCollection.find().count()).to.eq(0);
+
+    const args = {
+      chatId: Random.id(),
+      chatNote: "My chat note"
+    };
+    expect(() => {
+      saveChatNote.call(context, args);
+    }).to.throw(Error, "Chat not found");
+  });
+});
+
+describe("removeMessage() method test", () => {
+  let permittedUserId;
+  let unpermittedUserId;
+
+  beforeEach(() => {
+    resetDatabase();
+    initializeRoles();
+    permittedUserId = mockUserWithRole("REMOVE_MESSAGES");
+    unpermittedUserId = mockUser();
+  });
+
+  it("should throw error if user doesn't have permission", () => {
     const messageId = Random.id();
+    const invocation = {
+      unpermittedUserId
+    };
 
     const { removeMessage } = Meteor.server.method_handlers;
 
+    expect(() => {
+      removeMessage.call(invocation, messageId);
+    }).to.throw(Error, "User doesn't have permission REMOVE_MESSAGES");
+  });
+
+  it("should throw error if message is not found", () => {
+    const messageId = Random.id();
+    const { removeMessage } = Meteor.server.method_handlers;
+
     const invocation = {
-      userId
+      userId: permittedUserId
     };
     expect(() => {
       removeMessage.call(invocation, messageId);
     }).to.throw(Error, `Message with id ${messageId} not found`);
   });
 
-  it("should throw error if message status is not error", function() {
+  it("should throw error if message status is not error", () => {
     const messageId = MessagesCollection.insert({
       chatId: Random.id(),
       channel: "test",
@@ -95,14 +245,14 @@ describe("removeMessage() method test", function() {
     const { removeMessage } = Meteor.server.method_handlers;
 
     const invocation = {
-      userId
+      userId: permittedUserId
     };
     expect(() => {
       removeMessage.call(invocation, messageId);
     }).to.throw(Error, `Only error messages can be deleted`);
   });
 
-  it("should remove message if it has error status", function() {
+  it("should remove message if it has error status", () => {
     const messageId = MessagesCollection.insert({
       chatId: Random.id(),
       channel: "test",
@@ -112,7 +262,7 @@ describe("removeMessage() method test", function() {
     const { removeMessage } = Meteor.server.method_handlers;
 
     const invocation = {
-      userId
+      userId: permittedUserId
     };
 
     removeMessage.call(invocation, messageId);
@@ -125,16 +275,21 @@ describe("removeMessage() method test", function() {
   });
 });
 
-describe("resendMessage() method test", function() {
-  let userId;
-  before(function() {
-    resetDatabase();
+describe("resendMessage() method test", () => {
+  let permittedUserId;
+  let unpermittedUserId;
 
-    userId = mockUser();
+  beforeEach(() => {
+    resetDatabase();
+    initializeRoles();
+
+    permittedUserId = mockUserWithRole("SEND_MESSAGES");
+    unpermittedUserId = mockUser();
+
     sinon.replace(Transports, "sendMessage", sinon.fake());
   });
 
-  after(function() {
+  afterEach(() => {
     sinon.restore();
   });
 
@@ -150,12 +305,88 @@ describe("resendMessage() method test", function() {
     const { resendMessage } = Meteor.server.method_handlers;
 
     const invocation = {
-      userId
+      userId: permittedUserId
     };
 
     resendMessage.call(invocation, messageId);
 
     expect(Transports.sendMessage.calledWith("testChannel", chatId, messageId, "Test Message")).to
       .be.true;
+  });
+
+  it("should throw an error if user doesn't have permission", () => {
+    const { resendMessage } = Meteor.server.method_handlers;
+
+    const messageId = Random.id();
+    const invocation = { userId: unpermittedUserId };
+
+    expect(() => {
+      resendMessage.call(invocation, messageId);
+    }).to.throw(Error, "User doesn't have permission SEND_MESSAGES");
+  });
+
+  it("should throw an error if message isn't an error", () => {
+    const chatId = Random.id();
+    const messageId = MessagesCollection.insert({
+      chatId,
+      channel: "testChannel",
+      status: "sent",
+      message: "Test Message"
+    });
+
+    const { resendMessage } = Meteor.server.method_handlers;
+
+    const invocation = {
+      userId: permittedUserId
+    };
+
+    expect(() => {
+      resendMessage.call(invocation, messageId);
+    }).to.throw(Error, "Only error messages can be resent");
+  });
+});
+
+describe("recordMessageId() method test", () => {
+  let chatId;
+  let messageId;
+
+  beforeEach(() => {
+    resetDatabase();
+    chatId = mockChat();
+    messageId = mockMessage(chatId, "test");
+  });
+
+  it("should record channelMessageId to Message", () => {
+    const { recordMessageId } = Meteor.server.method_handlers;
+    const channelMessageId = Random.id();
+
+    const args = { internalMessageId: messageId, channelMessageId };
+
+    recordMessageId(args);
+
+    const message = MessagesCollection.findOne(
+      {
+        _id: messageId
+      },
+      {
+        fields: {
+          messageId: 1
+        }
+      }
+    );
+
+    expect(message.messageId).to.be.eq(channelMessageId);
+  });
+
+  it("should throw an error if message not found", () => {
+    const { recordMessageId } = Meteor.server.method_handlers;
+    const channelMessageId = Random.id();
+    const messageId = Random.id();
+
+    const args = { internalMessageId: messageId, channelMessageId };
+
+    expect(() => {
+      recordMessageId(args);
+    }).to.throw(Error, `Message with id ${messageId} not found`);
   });
 });
