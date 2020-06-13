@@ -20,7 +20,7 @@ export function PagePermissions(PageComponent, permission) {
   return props => {
     const classes = useStyles();
     if (Roles.userIsInRole(Meteor.userId(), permission)) {
-      return <PageComponent>{props}</PageComponent>;
+      return <PageComponent {...props} />;
     }
     return (
       <Container className={classes.container}>

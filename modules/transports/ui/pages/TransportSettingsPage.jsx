@@ -17,7 +17,6 @@ import { LoadingScreen } from "../../../layouts/components/LoadingScreen";
 import TransportCredentialsForm from "./TransportCredentialsForm";
 import TransportWebhooksInformation from "./TransportWebhooksInformation";
 import LogsList from "../../../logs/ui/components/LogsList";
-import UsersPage from "../../../users/ui/pages/UsersPage";
 
 import { PagePermissions } from "../../../users/ui/components/PagePermissions";
 
@@ -156,7 +155,7 @@ function TransportSettingsPage({ ready, transports }) {
   );
 }
 
-const PageWithPermissions = PagePermissions(UsersPage, "READ_TRANSPORTS");
+const PageWithPermissions = PagePermissions(TransportSettingsPage, "READ_TRANSPORTS");
 
 export default withTracker(() => {
   const subHandler = Meteor.subscribe("transports");
