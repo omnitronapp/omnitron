@@ -33,6 +33,9 @@ const useStyles = makeStyles({
 });
 
 function UsersPage({ ready, users }) {
+  if (!ready) {
+    return null;
+  }
   if (!Roles.userIsInRole(Meteor.userId(), "LIST_USERS")) {
     return <div>You don't have permission to access this page</div>;
   }
@@ -106,7 +109,7 @@ function UsersPage({ ready, users }) {
         </ListItemAvatar>
         <ListItemText primary={user.username} />
         <ListItemSecondaryAction>
-          <PermissionHoc permission="EDIT_USERS">
+          <PermissionHoc permission="CHANGE_USERS">
             <IconButton
               edge="end"
               aria-label="edit"
@@ -118,7 +121,7 @@ function UsersPage({ ready, users }) {
               <EditIcon />
             </IconButton>
           </PermissionHoc>
-          <PermissionHoc permission="EDIT_USERS">
+          <PermissionHoc permission="CHANGE_USERS">
             <IconButton
               edge="end"
               aria-label="remove"

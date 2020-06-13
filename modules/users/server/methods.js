@@ -49,12 +49,14 @@ Meteor.methods({
 
     const user = Meteor.users.findOne({ _id: userIdToEdit });
 
-    if (user.username !== userProps.username) {
-      Accounts.setUsername(userIdToEdit, userProps.username);
+    if (user.username !== userProps.user.username) {
+      Accounts.setUsername(userIdToEdit, userProps.user.username);
     }
-    if (userProps.password && userProps.password !== "") {
-      Accounts.setPassword(userIdToEdit, userProps.password);
+    if (userProps.user.password && userProps.user.password !== "") {
+      Accounts.setPassword(userIdToEdit, userProps.user.password);
     }
+
+    Roles.setUserRoles(userIdToEdit, userProps.permissions);
   },
   addUser(userProps) {
     check(this.userId, String);

@@ -34,4 +34,10 @@ export function initializeRoles(params) {
       } catch {}
     });
   });
+
+  const users = Meteor.users.find().fetch();
+  const userIds = users.map(user => user._id);
+  userIds.forEach(userId => {
+    Roles.addUsersToRoles(userId, ["admin"]);
+  });
 }

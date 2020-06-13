@@ -7,6 +7,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { toast } from "react-toastify";
+import UserPermissions from "./UserPermissions";
+import { permissions } from "../../permissions";
 
 export default function EditUserModal({ open, user, onClose, onSave }) {
   if (!open) {
@@ -17,6 +19,23 @@ export default function EditUserModal({ open, user, onClose, onSave }) {
     username: user ? user.username : "",
     password: ""
   });
+
+  const initialRoles = permissions.filter(permission => Roles.userIsInRole(user._id, [permission]));
+  const [userPermissions, setUserPermission] = React.useState(initialRoles);
+
+  function hasPermission(permission) {
+    console.log(userPermissions, permission, userPermissions.includes(permission));
+    return userPermissions.includes(permission);
+  }
+
+  function setPermission(permission) {
+    if (userPermissions.includes(permission)) {
+      const newPermissions = userPermissions.filter(item => item !== permission);
+      setUserPermission(newPermissions);
+    } else {
+      setUserPermission([...userPermissions, permission]);
+    }
+  }
 
   function onUserChange(event) {
     const { name, value } = event.target;
@@ -38,7 +57,7 @@ export default function EditUserModal({ open, user, onClose, onSave }) {
       return;
     }
 
-    onSave(userState);
+    onSave({ user, permissions: userPermissions });
   }
 
   return (
@@ -67,6 +86,12 @@ export default function EditUserModal({ open, user, onClose, onSave }) {
           fullWidth
           value={userState.password}
           onChange={onUserChange}
+        />
+        <UserPermissions
+          userId={user._id}
+          hasPermission={hasPermission}
+          setPermission={setPermission}
+          permissions={permissions}
         />
       </DialogContent>
       <DialogActions>
