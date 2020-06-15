@@ -2,15 +2,89 @@ import { Meteor } from "meteor/meteor";
 import { Random } from "meteor/random";
 import { resetDatabase } from "meteor/xolvio:cleaner";
 
-import sinon, { mock } from "sinon";
+import sinon from "sinon";
 import { expect } from "chai";
-import { mockUser, mockMessage, mockChat, mockUserWithRole } from "../../../server/testData";
+import {
+  mockUser,
+  mockMessage,
+  mockChat,
+  mockUserWithRole,
+  mockParsedMessage,
+  mockRawMessage
+} from "../../../server/testData";
 
 import { Transports } from "../../transports";
-import { ChatNotesCollection, MessagesCollection } from "../collections";
+import {
+  ChatNotesCollection,
+  MessagesCollection,
+  ChatsCollection,
+  RawMessagesCollection
+} from "../collections";
 import "./methods";
 
 import { initializeRoles } from "../../users/server/roles";
+
+describe("receiveMessage() method test", () => {
+  let channelChatId;
+  let chatId;
+
+  beforeEach(() => {
+    resetDatabase();
+
+    channelChatId = Random.id();
+    channelContactId = Random.id();
+    chatId = mockChat("test channel", channelChatId);
+  });
+
+  it("should add received message to an existing chat", () => {
+    const channel = "test channel";
+    const messageText = "Test Message";
+    const parsedMessage = mockParsedMessage(channel, channelChatId, messageText);
+    const rawMessage = mockRawMessage();
+
+    const { receiveMessage } = Meteor.server.method_handlers;
+    const args = { parsedMessage, rawMessage };
+
+    const ids = receiveMessage(args);
+
+    const rawMessageId = RawMessagesCollection.findOne(
+      { channel, message: rawMessage },
+      { fields: { _id: 1 } }
+    )._id;
+    const messageId = MessagesCollection.findOne(
+      { chatId, channel, message: messageText },
+      { fields: { _id: 1 } }
+    )._id;
+
+    expect(ids.chatId).to.be.eq(chatId);
+    expect(ids.messageId).to.be.eq(messageId);
+    expect(ids.rawMessageId).to.be.eq(rawMessageId);
+  });
+
+  it("should add received message and add chat", () => {
+    const messageText = "Test Message";
+    const parsedMessage = mockParsedMessage((message = messageText));
+    const rawMessage = mockRawMessage();
+
+    const { receiveMessage } = Meteor.server.method_handlers;
+    const args = { parsedMessage, rawMessage };
+
+    const ids = receiveMessage(args);
+
+    const rawMessageId = RawMessagesCollection.findOne(
+      { message: rawMessage },
+      { fields: { _id: 1 } }
+    )._id;
+    const messageId = MessagesCollection.findOne({ message: messageText }, { fields: { _id: 1 } })
+      ._id;
+    const newChatId = ChatsCollection.findOne({}, { sort: { createdAt: -1 }, fields: { _id: 1 } })
+      ._id;
+
+    expect(ids.chatId).to.be.eq(newChatId);
+    expect(ids.messageId).to.be.eq(messageId);
+    expect(ids.rawMessageId).to.be.eq(rawMessageId);
+  });
+});
 
 describe("changeMessageStatus() method test", () => {
   beforeEach(() => {
@@ -68,13 +142,14 @@ describe("createMessage() method test", () => {
 
   it("should do nothing if message is empty", () => {
     const { createMessage } = Meteor.server.method_handlers;
-
     const invocation = { userId: permittedUserId };
-    const args = { chatId, message: "" };
+    const message = "";
+    const args = { chatId, message };
 
     createMessage.call(invocation, args);
 
-    expect(Transports.sendMessage.calledWith(((chatId = chatId), (message = "")))).to.be.false;
+    const emptyMessage = MessagesCollection.findOne({ chatId, message });
+    expect(emptyMessage).to.be.undefined;
   });
 
   it("should send message", () => {
@@ -119,6 +194,7 @@ describe("createMessage() method test", () => {
 describe("setReadMessages() method test", () => {
   let userId;
   let chatId;
+
   beforeEach(() => {
     resetDatabase();
 
@@ -141,10 +217,14 @@ describe("setReadMessages() method test", () => {
     const { setReadMessages } = Meteor.server.method_handlers;
 
     const invocation = { userId };
+    setReadMessages.call(invocation, chatId);
 
-    const writeResult = setReadMessages.call(invocation, chatId);
+    const { readMessages } = ChatsCollection.findOne(
+      { _id: chatId },
+      { fields: { readMessages: 1 } }
+    );
 
-    expect(writeResult).to.eq(1);
+    expect(readMessages).be.not.eq([]);
   });
 });
 

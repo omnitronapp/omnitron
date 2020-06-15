@@ -284,7 +284,6 @@ Meteor.methods({
         count: messagesCount
       });
     }
-
     return ChatsCollection.update({ _id: chatId }, { $set: { readMessages } });
   },
   saveChatNote({ chatId, chatNote }) {
