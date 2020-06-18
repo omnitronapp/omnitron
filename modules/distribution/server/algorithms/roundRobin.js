@@ -77,6 +77,11 @@ export class RoundRobinAlgorithm {
   distribute(chatId) {
     const nextUser = this.getNextUser();
 
+    const chat = ChatsCollection.findOne({ _id: chatId }, { fields: { _id: 1 } });
+
+    if (!chat) {
+      throw new Error(`Chat with id ${chatId} not found`);
+    }
     ChatsCollection.update({ _id: chatId }, { $set: { userId: nextUser } });
     DistributionAlgorithms.update({ name: "round-robin" }, { $set: { lastUsedUser: nextUser } });
   }

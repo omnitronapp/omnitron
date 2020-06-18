@@ -173,7 +173,7 @@ describe("createMessage() method test", () => {
       }
     )._id;
 
-    expect(Transports.sendMessage.calledWith("omnitron", chatId, messageId, message)).to.be.true;
+    expect(Transports.sendMessage.calledWith("omnitron", chatId, messageId, message));
   });
 
   it("should throw an error if chat not found", () => {

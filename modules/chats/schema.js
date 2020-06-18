@@ -73,6 +73,10 @@ export const ChatSchema = new SimpleSchema({
         return 0;
       }
     }
+  },
+  userId: {
+    type: String,
+    optional: true
   }
 });
 
