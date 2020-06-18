@@ -63,7 +63,7 @@ describe("receiveMessage() method test", () => {
 
   it("should add received message and add chat", () => {
     const messageText = "Test Message";
-    const parsedMessage = mockParsedMessage((message = messageText));
+    const parsedMessage = mockParsedMessage(undefined, undefined, messageText);
     const rawMessage = mockRawMessage();
 
     const { receiveMessage } = Meteor.server.method_handlers;
@@ -173,7 +173,7 @@ describe("createMessage() method test", () => {
       }
     )._id;
 
-    expect(Transports.sendMessage.calledWith("omnitron", chatId, messageId, message));
+    expect(Transports.sendMessage.calledWith("omnitron", chatId, messageId, message)).to.be.true;
   });
 
   it("should throw an error if chat not found", () => {
@@ -200,6 +200,11 @@ describe("setReadMessages() method test", () => {
 
     userId = mockUser();
     chatId = mockChat();
+
+    mockMessage(chatId, "test message 1", "test");
+    mockMessage(chatId, "test message 2", "test");
+    mockMessage(chatId, "test message 3", "test");
+    mockMessage(chatId, "test message 4", "test");
   });
 
   it("should throw an error if chat not found", () => {
@@ -213,8 +218,10 @@ describe("setReadMessages() method test", () => {
     }).to.throw(Error, "Chat not found");
   });
 
-  it("should return WriteResult when updated", () => {
+  it("should update chat readMessage by adding userId and messages read count", () => {
     const { setReadMessages } = Meteor.server.method_handlers;
+
+    ChatsCollection.update({ _id: chatId }, { $set: { messagesCount: 4 } });
 
     const invocation = { userId };
     setReadMessages.call(invocation, chatId);
@@ -224,7 +231,12 @@ describe("setReadMessages() method test", () => {
       { fields: { readMessages: 1 } }
     );
 
-    expect(readMessages).be.not.eq([]);
+    expect(readMessages).be.eql([
+      {
+        userId,
+        count: 4
+      }
+    ]);
   });
 });
 

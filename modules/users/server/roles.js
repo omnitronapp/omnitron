@@ -14,9 +14,9 @@ export function initializeRoles(params) {
     "CHANGE_USERS"
   ];
   childRoles.forEach(roleName => {
-    try {
+    if (!Meteor.roles.findOne(roleName)) {
       Roles.createRole(roleName);
-    } catch {}
+    }
   });
 
   const roles = [
@@ -25,19 +25,11 @@ export function initializeRoles(params) {
   ];
 
   roles.forEach(role => {
-    try {
-      Roles.createRole(role["roleName"]);
-    } catch {}
-    role["children"].forEach(child => {
-      try {
-        Roles.addRolesToParent(child, role["roleName"]);
-      } catch {}
-    });
-  });
-
-  const users = Meteor.users.find().fetch();
-  const userIds = users.map(user => user._id);
-  userIds.forEach(userId => {
-    Roles.addUsersToRoles(userId, ["admin"]);
+    if (!Meteor.roles.findOne(role.roleName)) {
+      Roles.createRole(role.roleName);
+      role.children.forEach(child => {
+        Roles.addRolesToParent(child, role.roleName);
+      });
+    }
   });
 }
