@@ -20,11 +20,22 @@ export default function EditUserModal({ open, user, onClose, onSave }) {
     password: ""
   });
 
-  const initialRoles = permissions.filter(permission => Roles.userIsInRole(user._id, [permission]));
-  const [userPermissions, setUserPermission] = React.useState(initialRoles);
+  const [userPermissions, setUserPermission] = React.useState([]);
+
+  React.useEffect(
+    () => {
+      if (user) {
+        Meteor.call("getUserRoles", user._id, (err, initialRoles) => {
+          setUserPermission(initialRoles);
+        });
+      } else {
+        setUserPermission([]);
+      }
+    },
+    [user ? user._id : 1]
+  );
 
   function hasPermission(permission) {
-    console.log(userPermissions, permission, userPermissions.includes(permission));
     return userPermissions.includes(permission);
   }
 
@@ -57,7 +68,7 @@ export default function EditUserModal({ open, user, onClose, onSave }) {
       return;
     }
 
-    onSave({ user, permissions: userPermissions });
+    onSave({ user: userState, permissions: userPermissions });
   }
 
   return (
@@ -88,7 +99,6 @@ export default function EditUserModal({ open, user, onClose, onSave }) {
           onChange={onUserChange}
         />
         <UserPermissions
-          userId={user._id}
           hasPermission={hasPermission}
           setPermission={setPermission}
           permissions={permissions}

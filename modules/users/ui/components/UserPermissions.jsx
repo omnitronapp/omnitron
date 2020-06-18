@@ -6,7 +6,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 
-function UserPermissions({ userId, permissions, hasPermission, setPermission }) {
+function UserPermissions({ permissions, hasPermission, setPermission }) {
   return (
     <>
       <Typography>User Permissions</Typography>

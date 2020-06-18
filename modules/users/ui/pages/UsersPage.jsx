@@ -74,7 +74,11 @@ function UsersPage({ ready, users }) {
       }
 
       Meteor.call("removeUser", removeUser._id, function(err, res) {
-        console.log(err, res);
+        if (err) {
+          toast.error(err.message);
+        } else {
+          toast.success("Successfully removed the user");
+        }
       });
     }
   }

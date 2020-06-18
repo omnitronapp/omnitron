@@ -10,7 +10,7 @@ Meteor.publish("currentUser", function() {
 });
 
 Meteor.publish("users", function() {
-  if (!Roles.userIsInRole(this.userId, "READ_USERS")) {
+  if (!Roles.userIsInRole(this.userId, "LIST_USERS")) {
     this.ready();
     return;
   }

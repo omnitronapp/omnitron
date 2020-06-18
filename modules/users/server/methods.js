@@ -3,6 +3,7 @@ import { check } from "meteor/check";
 import { Accounts } from "meteor/accounts-base";
 
 import { distributorInterface } from "../../distribution/server";
+import { permissions } from "../permissions";
 
 Meteor.methods({
   updateUserCredentials(credentials) {
@@ -24,7 +25,7 @@ Meteor.methods({
     check(userIdToRemove, String);
     check(this.userId, String);
 
-    if (!Roles.userIsInRole(this.userId, "REMOVE_USERS"))
+    if (!Roles.userIsInRole(this.userId, "CHANGE_USERS"))
       throw new Error("User doesn't have permission REMOVE_USERS");
 
     Meteor.users.update(
@@ -66,14 +67,26 @@ Meteor.methods({
       throw new Error("User doesn't have permission ADD_USERS");
 
     const userId = Accounts.createUser({
-      username: userProps.username,
-      password: userProps.password
+      username: userProps.user.username,
+      password: userProps.user.password
     });
+
+    Roles.setUserRoles(userId, userProps.permissions);
 
     // Reconfigure  Distribution Algorithms
     distributorInterface.userDataChanged();
-
     return userId;
+  },
+  getUserRoles(userId) {
+    check(this.userId, String);
+    check(userId, String);
+
+    if (userId !== this.userId && !Roles.userIsInRole(this.userId, "CHANGE_USERS")) {
+      throw new Error("User doesn't have permission CHANGE_USERS");
+    }
+
+    const initialRoles = permissions.filter(permission => Roles.userIsInRole(userId, [permission]));
+    return initialRoles;
   },
   setRole(userId, roleId) {
     check(userId, String);
