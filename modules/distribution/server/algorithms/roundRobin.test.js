@@ -8,7 +8,7 @@ import { RoundRobinAlgorithm } from "./roundRobin";
 import { DistributionAlgorithms } from "../../collections";
 import { ChatsCollection } from "../../../chats/collections";
 
-describe("reconfigure() method test", () => {
+describe("reconfigure() function test", () => {
   let userIds = [];
   let roundRobinAlgorithm;
 
@@ -37,7 +37,7 @@ describe("reconfigure() method test", () => {
   });
 });
 
-describe("getNextUser() method test", () => {
+describe("getNextUser() function test", () => {
   let userIds = [];
   let roundRobinAlgorithm;
 
@@ -103,7 +103,7 @@ describe("getNextUser() method test", () => {
   });
 });
 
-describe("distribute() method test", () => {
+describe("distribute() function test", () => {
   let userId;
   let chatId;
   let roundRobinAlgorithm;

@@ -15,9 +15,9 @@ export function initializeRoles(params) {
     "REMOVE_USERS"
   ];
   childRoles.forEach(roleName => {
-    try {
+    if (!Meteor.roles.findOne(roleName)) {
       Roles.createRole(roleName);
-    } catch {}
+    }
   });
 
   const roles = [
@@ -26,6 +26,7 @@ export function initializeRoles(params) {
   ];
 
   roles.forEach(role => {
+<<<<<<< HEAD
     try {
       Roles.createRole(role.roleName);
     } catch {}
@@ -40,5 +41,13 @@ export function initializeRoles(params) {
   const userIds = users.map(user => user._id);
   userIds.forEach(userId => {
     Roles.addUsersToRoles(userId, ["admin"]);
+=======
+    if (!Meteor.roles.findOne(role.roleName)) {
+      Roles.createRole(role.roleName);
+      role.children.forEach(child => {
+        Roles.addRolesToParent(child, role.roleName);
+      });
+    }
+>>>>>>> 62decd8919cb469faaa2d1d6ce9957a5e2614517
   });
 }
