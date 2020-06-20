@@ -231,16 +231,12 @@ describe("setReadMessages() method test", () => {
       { fields: { readMessages: 1 } }
     );
 
-<<<<<<< HEAD
-    expect(readMessages).to.be.an("array").that.is.not.empty;
-=======
     expect(readMessages).be.eql([
       {
         userId,
         count: 4
       }
     ]);
->>>>>>> 62decd8919cb469faaa2d1d6ce9957a5e2614517
   });
 });
 

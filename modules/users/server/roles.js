@@ -26,28 +26,11 @@ export function initializeRoles(params) {
   ];
 
   roles.forEach(role => {
-<<<<<<< HEAD
-    try {
-      Roles.createRole(role.roleName);
-    } catch {}
-    role.children.forEach(child => {
-      try {
-        Roles.addRolesToParent(child, role.roleName);
-      } catch {}
-    });
-  });
-
-  const users = Meteor.users.find().fetch();
-  const userIds = users.map(user => user._id);
-  userIds.forEach(userId => {
-    Roles.addUsersToRoles(userId, ["admin"]);
-=======
     if (!Meteor.roles.findOne(role.roleName)) {
       Roles.createRole(role.roleName);
       role.children.forEach(child => {
         Roles.addRolesToParent(child, role.roleName);
       });
     }
->>>>>>> 62decd8919cb469faaa2d1d6ce9957a5e2614517
   });
 }
