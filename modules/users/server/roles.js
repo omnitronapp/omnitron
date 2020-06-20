@@ -11,7 +11,8 @@ export function initializeRoles(params) {
     "CHANGE_TRANSPORTS",
     "ADD_USERS",
     "LIST_USERS",
-    "CHANGE_USERS"
+    "CHANGE_USERS",
+    "REMOVE_USERS"
   ];
   childRoles.forEach(roleName => {
     try {
@@ -26,11 +27,11 @@ export function initializeRoles(params) {
 
   roles.forEach(role => {
     try {
-      Roles.createRole(role["roleName"]);
+      Roles.createRole(role.roleName);
     } catch {}
-    role["children"].forEach(child => {
+    role.children.forEach(child => {
       try {
-        Roles.addRolesToParent(child, role["roleName"]);
+        Roles.addRolesToParent(child, role.roleName);
       } catch {}
     });
   });

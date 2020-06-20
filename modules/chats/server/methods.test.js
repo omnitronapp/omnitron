@@ -63,7 +63,7 @@ describe("receiveMessage() method test", () => {
 
   it("should add received message and add chat", () => {
     const messageText = "Test Message";
-    const parsedMessage = mockParsedMessage((message = messageText));
+    const parsedMessage = mockParsedMessage(undefined, undefined, messageText);
     const rawMessage = mockRawMessage();
 
     const { receiveMessage } = Meteor.server.method_handlers;
@@ -224,7 +224,7 @@ describe("setReadMessages() method test", () => {
       { fields: { readMessages: 1 } }
     );
 
-    expect(readMessages).be.not.eq([]);
+    expect(readMessages).to.be.an("array").that.is.not.empty;
   });
 });
 

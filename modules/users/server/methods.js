@@ -25,9 +25,13 @@ Meteor.methods({
     check(userIdToRemove, String);
     check(this.userId, String);
 
-    if (!Roles.userIsInRole(this.userId, "CHANGE_USERS"))
+    if (!Roles.userIsInRole(this.userId, "REMOVE_USERS"))
       throw new Error("User doesn't have permission REMOVE_USERS");
 
+    const user = Meteor.users.findOne({ _id: userIdToRemove });
+    if (!user) {
+      throw new Error(`User with id ${userIdToRemove} doesn't exist`);
+    }
     Meteor.users.update(
       { _id: userIdToRemove },
       {
