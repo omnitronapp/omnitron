@@ -11,10 +11,15 @@ import Badge from "@material-ui/core/Badge";
 import { makeStyles } from "@material-ui/core/styles";
 
 import ChannelIcon from "./ChannelIcon";
+import TransferList from "./TransferList";
+import { Container } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   chip: {
     marginTop: "-16px"
+  },
+  last_item_text: {
+    marginRight: "-16px"
   }
 }));
 
@@ -56,6 +61,7 @@ export default function ChatItem({
 
   return (
     <ListItem button selected={selected} onClick={onClick}>
+      <TransferList />
       <ListItemAvatar>
         <Avatar alt={name} src={avatar}>
           A

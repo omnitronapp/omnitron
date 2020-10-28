@@ -12,10 +12,10 @@ Meteor.publish("chats", function(name, options) {
     return this.ready();
   }
 
-  let filters = {};
-
+  let filters = { userId: this.userId };
   if (name) {
     filters = {
+      ...filters,
       name: { $regex: name, $options: "i" }
     };
   }

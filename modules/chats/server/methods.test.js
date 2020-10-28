@@ -482,3 +482,43 @@ describe("recordMessageId() method test", () => {
     }).to.throw(Error, `Message with id ${messageId} not found`);
   });
 });
+
+describe("transferChat() method test", () => {
+  let userId;
+  let chatId;
+
+  beforeEach(() => {
+    resetDatabase();
+
+    userId = mockUser();
+    chatId = mockChat();
+  });
+
+  it("should change user for chat", () => {
+    const { transferChat } = Meteor.server.method_handlers;
+
+    transferChat({ userId, chatId });
+
+    const chat = ChatsCollection.findOne({ _id: chatId }, { fields: { userId: 1 } });
+
+    expect(chat.userId).to.be.eq(userId);
+  });
+
+  it("should throw an error if userId is incorrect", () => {
+    userId = Random.id();
+    const { transferChat } = Meteor.server.method_handlers;
+
+    expect(() => {
+      transferChat({ userId, chatId });
+    }).to.throw(Error, `User with id ${userId} not found`);
+  });
+
+  it("should throw an error if chatId is incorrect", () => {
+    chatId = Random.id();
+    const { transferChat } = Meteor.server.method_handlers;
+
+    expect(() => {
+      transferChat({ userId, chatId });
+    }).to.throw(Error, `Chat with id ${chatId} not found`);
+  });
+});

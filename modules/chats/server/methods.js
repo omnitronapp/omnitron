@@ -362,5 +362,29 @@ Meteor.methods({
       { _id: internalMessageId },
       { $set: { messageId: channelMessageId } }
     );
+  },
+  transferChat({ userId, chatId }) {
+    check(userId, String);
+    check(chatId, String);
+
+    const user = Meteor.users.findOne({ _id: userId });
+
+    if (!user) {
+      throw new Error(`User with id ${userId} not found`);
+    }
+    const chat = ChatsCollection.findOne({ _id: chatId });
+
+    if (!chat) {
+      throw new Error(`Chat with id ${chatId} not found`);
+    }
+
+    ChatsCollection.update({ _id: chatId }, { $set: { userId } });
+  },
+  getUsers: function() {
+    check(this.userId, String);
+
+    const users = Meteor.users.find({ _id: { $ne: this.userId } }).fetch();
+
+    return users;
   }
 });
